@@ -3,12 +3,11 @@ from django.db import models
 # Create your models here.
 
 class Player(models.Model):
-    PLAYER_ID = models.CharField(max_length=255)
-    LEAGUE_ID = models.IntegerField()
+    PLAYER_ID = models.IntegerField()
+    Player_Name = models.CharField(max_length=255)
     Team_ID = models.IntegerField()
     Team_Name = models.CharField(max_length=255)
     GP = models.IntegerField()
-    GS = models.IntegerField()
     MIN = models.FloatField()
     FGM = models.FloatField()
     FGA = models.FloatField()
