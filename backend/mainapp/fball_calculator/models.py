@@ -27,7 +27,7 @@ class Player(models.Model):
     TOV = models.FloatField()
     PF = models.FloatField()
     PTS = models.FloatField()
+    FTeam = models.ForeignKey("Team",null=True,on_delete=models.SET_NULL)
 
 class Team(models.Model):
     name = models.CharField(max_length=255)
-    players = models.ManyToManyField(Player)
