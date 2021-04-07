@@ -22,6 +22,18 @@ def calculate(request):
     return HttpResponse(dump, content_type='application/json')
 
 
+def roster(request,teamid):
+
+    t = Team.objects.get(id=1)
+    roster = pd.DataFrame(list(t.player_set.all().values()))
+
+    output = roster.to_json(orient="table")
+    parsed = json.loads(output)
+    dump = json.dumps(parsed["data"])
+
+    return HttpResponse(dump, content_type='application/json')
+    
+
 
 #@api_view(['POST'])
 #def addplayers(request)
@@ -34,3 +46,4 @@ class PlayerViewSet(viewsets.ModelViewSet):
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
+
