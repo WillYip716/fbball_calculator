@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import calculate, TeamViewSet, PlayerViewSet, roster
+from .views import calculate, TeamViewSet, PlayerViewSet, roster, allRosters
 from rest_framework import routers
 from rest_framework.routers import DefaultRouter
 
@@ -14,4 +14,5 @@ urlpatterns = [
     path(r'', include(router.urls)),
     path('calculate', calculate, name = 'api_calculate'),
     path('team/<int:teamid>', roster, name = 'api_teamroster'),
+    path('teams/', allRosters, name = 'api_rosters'),
 ]

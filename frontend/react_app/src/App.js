@@ -4,7 +4,7 @@ import Home from './components/home';
 import About from './components/about';
 import NavbarComp from './components/navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../node_modules/bootstrap/dist/css/bootstrap.min.css'; 
+
 
 function App() {
   return (
