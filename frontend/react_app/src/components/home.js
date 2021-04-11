@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios';
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
+import paginationFactory from 'react-bootstrap-table2-paginator';
 
 class Home extends Component {
   state = {
@@ -96,13 +97,15 @@ class Home extends Component {
   
   render() {
     return (
-      <div className="container" style={{ marginTop: 50 }}>
+      <div className="container">
         <BootstrapTable 
         striped
         hover
         keyField='id' 
         data={ this.state.products } 
-        columns={ this.state.columns } />
+        columns={ this.state.columns }
+        pagination={ paginationFactory() }
+        />
       </div>
     );
   }

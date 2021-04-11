@@ -25,11 +25,14 @@ def calculate(request):
 def roster(request,teamid):
 
     t = Team.objects.get(id=teamid)
-    roster = pd.DataFrame(list(t.player_set.all().values()))
+    roster = list(t.player_set.all().values())
 
-    output = roster.to_json(orient="table")
-    parsed = json.loads(output)
-    dump = json.dumps(parsed["data"])
+    data = {
+        "team": t.name,
+        "teamid": t.id,
+        "players": roster,
+    }
+    dump = json.dumps(data)
 
     return HttpResponse(dump, content_type='application/json')
 
@@ -43,9 +46,10 @@ def allRosters(request):
         players = list(players)
         data = {
             "team": t.name,
+            "teamid": t.id,
             "players": players,
         }
-        rosters.insert(0, data) 
+        rosters.append(data)
 
     dump = json.dumps(rosters)
 
