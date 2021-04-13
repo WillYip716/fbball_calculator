@@ -1,10 +1,11 @@
 import csv
 from nba_api.stats.endpoints import leaguedashplayerstats
-from fball_calculator.models import Team,Player
+from fball_calculator.models import Team,Player,Positions
 import pandas as pd
 
 def run():
-    players = leaguedashplayerstats.LeagueDashPlayerStats(season='2020-21',per_mode_detailed="PerGame",season_type_all_star="Regular Season")
+    #players = leaguedashplayerstats.LeagueDashPlayerStats(season='2020-21',per_mode_detailed="PerGame",season_type_all_star="Regular Season")
+    players = leaguedashplayerstats.LeagueDashPlayerStats(season='2020-21',per_mode_detailed="PerGame",season_type_all_star="Regular Season", player_position_abbreviation_nullable="C")
     players = players.get_data_frames()[0]
 
 
@@ -16,6 +17,15 @@ def run():
 
         #g.save()
 
-        p = Player(PLAYER_ID = j.PLAYER_ID,Player_Name=j.PLAYER_NAME, Team_ID=j.TEAM_ID, Team_Name=j.TEAM_ABBREVIATION, GP=j.GP, MIN=j.MIN, FGM=j.FGM, FGA=j.FGA, FG_PCT=j.FG_PCT, FG3M=j.FG3M, FG3A=j.FG3A, FG3_PCT=j.FG3_PCT, FTM=j.FTM, FTA=j.FTA, FT_PCT=j.FT_PCT, OREB=j.OREB, DREB=j.DREB, REB=j.REB, AST=j.AST, STL=j.STL, BLK=j.BLK, TOV=j.TOV, PF=j.PF, PTS=j.PTS)
+        #p = Player(PLAYER_ID = j.PLAYER_ID,Player_Name=j.PLAYER_NAME, Team_ID=j.TEAM_ID, Team_Name=j.TEAM_ABBREVIATION, GP=j.GP, MIN=j.MIN, FGM=j.FGM, FGA=j.FGA, FG_PCT=j.FG_PCT, FG3M=j.FG3M, FG3A=j.FG3A, FG3_PCT=j.FG3_PCT, FTM=j.FTM, FTA=j.FTA, FT_PCT=j.FT_PCT, OREB=j.OREB, DREB=j.DREB, REB=j.REB, AST=j.AST, STL=j.STL, BLK=j.BLK, TOV=j.TOV, PF=j.PF, PTS=j.PTS)
 
-        p.save()
+        try:
+            p = Player.objects.get(PLAYER_ID = j.PLAYER_ID)
+        except Player.DoesNotExist:
+            p = False
+
+        if p:
+            p.Pos.add(Positions.objects.get(id=3))
+            p.save()
+
+        

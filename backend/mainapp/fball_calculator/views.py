@@ -3,8 +3,8 @@ import numpy as np
 import json
 from rest_framework import serializers, viewsets
 from django.http import HttpResponse
-from fball_calculator.models import Player,Team
-from .serializer import PlayerSerializer, TeamSerializer
+from fball_calculator.models import Player,Team,Positions
+from .serializer import PlayerSerializer, TeamSerializer, PositionsSerializer
 #from fball_calculator.models import Game
 
 
@@ -17,7 +17,6 @@ def calculate(request):
     parsed = json.loads(output)
 
     dump = json.dumps(parsed["data"])
-
 
     return HttpResponse(dump, content_type='application/json')
 
@@ -54,6 +53,29 @@ def allRosters(request):
     dump = json.dumps(rosters)
 
     return HttpResponse(dump, content_type='application/json')
+
+
+def playersByPosition(request,avail):
+
+    g = list(Positions.objects.get(Position='G').player_set.all().values())
+    f = list(Positions.objects.get(Position='F').player_set.all().values())
+    c = list(Positions.objects.get(Position='C').player_set.all().values())
+
+    pos = Positions.objects.get(Position='F').player_set.filter(FTeam_id = None).values()
+
+    if avail:
+        g = [p for p in g if p['FTeam_id'] == None]
+        f = [p for p in f if p['FTeam_id'] == None]
+        c = [p for p in c if p['FTeam_id'] == None]
+
+    data = {
+        "guards": g,
+        "forwards": f,
+        "centers": c,
+    }
+    dump = json.dumps(data)
+
+    return HttpResponse(dump, content_type='application/json')
     
 
 
@@ -69,3 +91,6 @@ class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
 
+class PositionsViewSet(viewsets.ModelViewSet):
+    queryset = Positions.objects.all()
+    serializer_class = PositionsSerializer

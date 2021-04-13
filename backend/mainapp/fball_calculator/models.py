@@ -2,6 +2,9 @@ from django.db import models
 
 # Create your models here.
 
+class Positions(models.Model):
+    Position = models.CharField(max_length=1, unique=True)
+
 class Player(models.Model):
     PLAYER_ID = models.IntegerField()
     Player_Name = models.CharField(max_length=255)
@@ -28,6 +31,7 @@ class Player(models.Model):
     PF = models.FloatField()
     PTS = models.FloatField()
     FTeam = models.ForeignKey("Team",null=True,on_delete=models.SET_NULL)
+    Pos = models.ManyToManyField(Positions)
 
 class Team(models.Model):
     name = models.CharField(max_length=255)
