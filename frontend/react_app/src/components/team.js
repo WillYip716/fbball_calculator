@@ -10,6 +10,12 @@ class Team extends Component {
     state = {
       teamName:"",  
       team: [],
+      guards: [],
+      forwards: [],
+      centers: [],
+      all: [],
+      addbox1: "",
+      addbox2: "",
       columns: [
         {
           dataField: 'Player_Name',
@@ -91,11 +97,19 @@ class Team extends Component {
   
     componentDidMount() {
       axios.get('/team/' + this.props.match.params.id)
-        .then(response => {
-          this.setState({
-            teamName: response.data.team,
-            team: response.data.players
-          });
+        .then(response1 => {
+          axios.get('/pbp/1' + this.props.match.params.id)
+            .then(response2 => {
+                this.setState({
+                    teamName: response1.data.team,
+                    team: response1.data.players,
+                    guards: response2.data.guards,
+                    forwards: response2.data.forwards,
+                    centers: response2.data.centers,
+                    all: response2.data.all,
+                  
+                });
+            });
         });
     }
     

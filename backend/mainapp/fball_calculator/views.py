@@ -68,10 +68,14 @@ def playersByPosition(request,avail):
         f = [p for p in f if p['FTeam_id'] == None]
         c = [p for p in c if p['FTeam_id'] == None]
 
+    temp = g + f + c
+    temp = [dict(t) for t in {tuple(d.items()) for d in temp}]
+    a = sorted(temp, key=lambda k: k['Player_Name']) 
     data = {
         "guards": g,
         "forwards": f,
         "centers": c,
+        "all": a,
     }
     dump = json.dumps(data)
 
