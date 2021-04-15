@@ -32,6 +32,8 @@ class Player(models.Model):
     PTS = models.FloatField()
     FTeam = models.ForeignKey("Team",null=True,on_delete=models.SET_NULL)
     Pos = models.ManyToManyField(Positions)
+    PosStr = models.CharField(max_length=3,default="")
+    FTeamPos = models.CharField(max_length=3,default="")
 
 class Team(models.Model):
     name = models.CharField(max_length=255)

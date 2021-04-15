@@ -14,6 +14,11 @@ class Home extends Component {
         sort: true
       },
       {
+        dataField: 'PosStr',
+        text: 'Pos.',
+        sort: true
+      },
+      {
         dataField: 'GP',
         text: 'GP',
         sort: true

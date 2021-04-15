@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
+import { Form,Button } from "react-bootstrap";
 import axios from 'axios';
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
 //import {Link} from 'react-router-dom';
@@ -9,17 +10,23 @@ import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
 class Team extends Component {
     state = {
       teamName:"",  
+      choiceplayers: [],
       team: [],
       guards: [],
       forwards: [],
       centers: [],
       all: [],
-      addbox1: "",
-      addbox2: "",
+      posbox: "",
+      playerbox: "",
       columns: [
         {
           dataField: 'Player_Name',
           text: 'Name',
+          sort: true
+        },
+        {
+          dataField: 'PosStr',
+          text: 'Pos.',
           sort: true
         },
         {
@@ -112,6 +119,36 @@ class Team extends Component {
             });
         });
     }
+
+    changepositionbox(event) {
+      if(event.target.value === "guards"){
+          this.setState({
+            choiceplayers: this.state.guards,
+            posbox: "guard"
+          })
+      }
+      else if(event.target.value === "forwards"){
+        this.setState({
+          choiceplayers: this.state.forwards,
+          posbox: "forward"
+        })
+      }
+      else if(event.target.value === "centers"){
+        this.setState({
+          choiceplayers: this.state.centers,
+          posbox: "center"
+        })
+      }
+    }
+
+    changeplayerbox(event) {
+      console.log(event.target.value);
+    }
+    
+    addPlayer(event) {
+      event.preventDefault();
+      console.log("values are : " + this.state.posbox + " " + this.state.playerbox);
+    }
     
     render() {
       return (
@@ -124,6 +161,26 @@ class Team extends Component {
           data={ this.state.team } 
           columns={ this.state.columns }
           />
+
+          <Form onSubmit={this.addPlayer.bind(this)} role="form">
+            <Form.Group controlId="exampleForm.SelectCustom">
+              <Form.Label>Select a player to add : </Form.Label>
+              <Form.Control as="select" custom onChange={this.changepositionbox.bind(this)}>
+                <option value="guards">Guard</option>
+                <option value="forwards">Forwards</option>
+                <option value="centers">Centers</option>
+              </Form.Control>
+              <Form.Control as="select" custom onChange={this.changeplayerbox.bind(this)}>
+              {this.state.choiceplayers ?
+                  this.state.choiceplayers.map(players => (
+                      <option key={players.Player_Name}>{players.Player_Name}</option>
+                  ))
+                  :<h3>nothing yet</h3>
+              }
+              </Form.Control>
+            </Form.Group>
+            <Button type="submit">Submit form</Button>
+          </Form>
         </div>
       );
     }
