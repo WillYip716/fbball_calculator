@@ -147,6 +147,11 @@ class Team extends Component {
     
     addPlayer(event) {
       event.preventDefault();
+      /*axios.post(`${settings.API_SERVER}/api/auth/login/`, {
+          username: username,
+          password: password
+      })*/
+      
       console.log("values are : " + this.state.posbox + " " + this.state.playerbox);
     }
     

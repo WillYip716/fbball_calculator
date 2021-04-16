@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 import json
-from rest_framework import serializers, viewsets
+from rest_framework.decorators import api_view
+from rest_framework import serializers, viewsets, status
 from django.http import HttpResponse
 from fball_calculator.models import Player,Team,Positions
 from .serializer import PlayerSerializer, TeamSerializer, PositionsSerializer
@@ -80,6 +81,31 @@ def playersByPosition(request,avail):
     dump = json.dumps(data)
 
     return HttpResponse(dump, content_type='application/json')
+
+
+@api_view(['PUT'])
+def addplayer(request):
+    if request.method == 'PUT':
+
+        data = json.loads(request.body)
+        try:
+            player = Player.objects.get(Player_Name = data['name'])
+        except Player.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        team = Team.objects.get(id = data['teamid'])
+        player.FTeam = team
+
+        if data['pos'] == "guard": 
+            player.FTeamPos = "G"
+        elif data['pos'] == "forward": 
+            player.FTeamPos = "F"
+        elif data['pos'] == "center": 
+            player.FTeamPos = "C"
+
+        player.save()
+        #dump = json.dumps(list(player.values()))
+        return HttpResponse(status=200)
     
 
 
