@@ -58,11 +58,17 @@ def allRosters(request):
 
 def playersByPosition(request,avail):
 
+    data = playersByPositionHelper(avail)
+
+    return HttpResponse(data, content_type='application/json')
+
+
+def playersByPositionHelper(avail):
     g = list(Positions.objects.get(Position='G').player_set.all().values())
     f = list(Positions.objects.get(Position='F').player_set.all().values())
     c = list(Positions.objects.get(Position='C').player_set.all().values())
 
-    pos = Positions.objects.get(Position='F').player_set.filter(FTeam_id = None).values()
+    #pos = Positions.objects.get(Position='F').player_set.filter(FTeam_id = None).values()
 
     if avail:
         g = [p for p in g if p['FTeam_id'] == None]
@@ -80,7 +86,7 @@ def playersByPosition(request,avail):
     }
     dump = json.dumps(data)
 
-    return HttpResponse(dump, content_type='application/json')
+    return dump
 
 
 @api_view(['PUT'])
@@ -104,8 +110,10 @@ def addplayer(request):
             player.FTeamPos = "C"
 
         player.save()
+
+        dump = playersByPositionHelper("1")
         #dump = json.dumps(list(player.values()))
-        return HttpResponse(status=200)
+        return HttpResponse(dump, content_type='application/json')
     
 
 

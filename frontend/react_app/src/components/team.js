@@ -9,6 +9,7 @@ import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
 
 class Team extends Component {
     state = {
+      tablerender:1,
       teamName:"",  
       choiceplayers: [],
       team: [],
@@ -142,17 +143,34 @@ class Team extends Component {
     }
 
     changeplayerbox(event) {
-      console.log(event.target.value);
+      this.setState({
+          playerbox: event.target.value,
+      })
     }
     
     addPlayer(event) {
       event.preventDefault();
-      /*axios.post(`${settings.API_SERVER}/api/auth/login/`, {
-          username: username,
-          password: password
-      })*/
-      
-      console.log("values are : " + this.state.posbox + " " + this.state.playerbox);
+      const info = {
+          name: this.state.playerbox,
+          teamid: this.props.match.params.id,
+          pos: this.state.posbox,
+      };
+      axios.put('/addplayer/',info)      
+        .then(response => {
+          axios.get('/team/' + this.props.match.params.id)
+          .then(response2 => {
+              this.setState({
+                guards: response.data.guards,
+                forwards: response.data.forwards,
+                centers: response.data.centers,
+                all: response.data.all,
+                team: response2.data.players,
+                posbox: "",
+                playerbox: "",
+                choiceplayers: [],
+              });
+          });
+        });
     }
     
     render() {
@@ -166,25 +184,30 @@ class Team extends Component {
           data={ this.state.team } 
           columns={ this.state.columns }
           />
+          
 
           <Form onSubmit={this.addPlayer.bind(this)} role="form">
             <Form.Group controlId="exampleForm.SelectCustom">
               <Form.Label>Select a player to add : </Form.Label>
+              <h6>Position to add</h6>
               <Form.Control as="select" custom onChange={this.changepositionbox.bind(this)}>
+                <option key='blankChoice' hidden value />
                 <option value="guards">Guard</option>
                 <option value="forwards">Forwards</option>
                 <option value="centers">Centers</option>
               </Form.Control>
+              <h6>Player to add</h6>
               <Form.Control as="select" custom onChange={this.changeplayerbox.bind(this)}>
-              {this.state.choiceplayers ?
-                  this.state.choiceplayers.map(players => (
-                      <option key={players.Player_Name}>{players.Player_Name}</option>
-                  ))
-                  :<h3>nothing yet</h3>
-              }
+                <option key='blankChoice2' hidden value />
+                {this.state.choiceplayers ?
+                    this.state.choiceplayers.map(players => (
+                        <option key={players.Player_Name} value={players.Player_Name}>{players.Player_Name}</option>
+                    ))
+                    :<h3>nothing yet</h3>
+                }
               </Form.Control>
             </Form.Group>
-            <Button type="submit">Submit form</Button>
+            <Button type="submit">Add Player</Button>
           </Form>
         </div>
       );
