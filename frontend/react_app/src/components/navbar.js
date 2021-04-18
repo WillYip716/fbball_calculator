@@ -1,8 +1,22 @@
-import React from 'react';
+import React,{ useState, useEffect } from 'react';
 import {Navbar, Nav, NavDropdown} from 'react-bootstrap';
-
+import axios from 'axios';
 
 function NavbarComp(){
+
+    const [teams, setTeams] = useState([]);
+
+    useEffect(()=>{
+        async function fetchdata(){
+            
+            axios.get('/teams/')
+            .then(res => {
+                const rosters = res.data;
+                setTeams(rosters);
+            })
+        }
+        fetchdata();
+    },[])
     
     return(
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
@@ -10,7 +24,9 @@ function NavbarComp(){
             <Nav style={{marginRight:"auto"}}>
                 <NavDropdown title="Rosters" id="collasible-nav-dropdown">
                     <NavDropdown.Item href="/rosters">All</NavDropdown.Item>
-                    <NavDropdown.Item href="/team/1">1</NavDropdown.Item>
+                    {teams.map(item => (
+                        <NavDropdown.Item href={"/team/" + item.teamid} key={item.team}>{item.team}</NavDropdown.Item>
+                    ))}
                 </NavDropdown>
             </Nav>
             <Nav>

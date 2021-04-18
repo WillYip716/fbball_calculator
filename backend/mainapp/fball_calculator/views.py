@@ -25,12 +25,21 @@ def calculate(request):
 def roster(request,teamid):
 
     t = Team.objects.get(id=teamid)
-    roster = list(t.player_set.all().values())
+    #roster = list(t.player_set.all().values())
+    #p = Player.objects.filter(FTeam=t)
+
+    g = list(t.player_set.filter(FTeamPos='G').values())
+    f = list(t.player_set.filter(FTeamPos='F').values())
+    c = list(t.player_set.filter(FTeamPos='C').values())
+    u = list(t.player_set.filter(FTeamPos='U').values())
 
     data = {
         "team": t.name,
         "teamid": t.id,
-        "players": roster,
+        "guards": g,
+        "forwards": f,
+        "centers": c,
+        "utils":u,
     }
     dump = json.dumps(data)
 
@@ -108,6 +117,8 @@ def addplayer(request):
             player.FTeamPos = "F"
         elif data['pos'] == "center": 
             player.FTeamPos = "C"
+        elif data['pos'] == "util": 
+            player.FTeamPos = "U"
 
         player.save()
 

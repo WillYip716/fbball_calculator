@@ -9,14 +9,16 @@ import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
 
 class Team extends Component {
     state = {
-      tablerender:1,
       teamName:"",  
       choiceplayers: [],
-      team: [],
+      rosterguards:[],
+      rosterforwards:[],
+      rostercenters:[],
+      rosterutils:[],
       guards: [],
       forwards: [],
       centers: [],
-      all: [],
+      all:[],
       posbox: "",
       playerbox: "",
       columns: [
@@ -110,12 +112,14 @@ class Team extends Component {
             .then(response2 => {
                 this.setState({
                     teamName: response1.data.team,
-                    team: response1.data.players,
                     guards: response2.data.guards,
                     forwards: response2.data.forwards,
                     centers: response2.data.centers,
                     all: response2.data.all,
-                  
+                    rosterguards: response1.data.guards,
+                    rosterforwards:response1.data.forwards,
+                    rostercenters:response1.data.centers,
+                    rosterutils:response1.data.utils,
                 });
             });
         });
@@ -138,6 +142,12 @@ class Team extends Component {
         this.setState({
           choiceplayers: this.state.centers,
           posbox: "center"
+        })
+      }
+      else if(event.target.value === "utility"){
+        this.setState({
+          choiceplayers: this.state.all,
+          posbox: "util"
         })
       }
     }
@@ -164,10 +174,13 @@ class Team extends Component {
                 forwards: response.data.forwards,
                 centers: response.data.centers,
                 all: response.data.all,
-                team: response2.data.players,
                 posbox: "",
                 playerbox: "",
                 choiceplayers: [],
+                rosterguards: response2.data.guards,
+                rosterforwards:response2.data.forwards,
+                rostercenters:response2.data.centers,
+                rosterutils:response2.data.utils,
               });
           });
         });
@@ -177,11 +190,39 @@ class Team extends Component {
       return (
         <div className="container">
           <h2>{this.state.teamName}</h2>
+          <h4>Guards ({this.state.rosterguards.length}/3)</h4>
           <BootstrapTable 
           striped
           hover
           keyField='id' 
-          data={ this.state.team } 
+          data={ this.state.rosterguards } 
+          columns={ this.state.columns }
+          />
+
+          <h4>Forwards ({this.state.rosterforwards.length}/3)</h4>
+          <BootstrapTable 
+          striped
+          hover
+          keyField='id' 
+          data={ this.state.rosterforwards } 
+          columns={ this.state.columns }
+          />
+
+          <h4>Centers ({this.state.rostercenters.length}/2)</h4>
+          <BootstrapTable 
+          striped
+          hover
+          keyField='id' 
+          data={ this.state.rostercenters } 
+          columns={ this.state.columns }
+          />
+
+          <h4>Utility ({this.state.rosterutils.length}/2)</h4>
+          <BootstrapTable 
+          striped
+          hover
+          keyField='id' 
+          data={ this.state.rosterutils } 
           columns={ this.state.columns }
           />
           
@@ -191,10 +232,11 @@ class Team extends Component {
               <Form.Label>Select a player to add : </Form.Label>
               <h6>Position to add</h6>
               <Form.Control as="select" custom onChange={this.changepositionbox.bind(this)}>
-                <option key='blankChoice' hidden value />
+                <option key='blankChoice' hidden value="" />
                 <option value="guards">Guard</option>
                 <option value="forwards">Forwards</option>
                 <option value="centers">Centers</option>
+                <option value="utility">Utility</option>
               </Form.Control>
               <h6>Player to add</h6>
               <Form.Control as="select" custom onChange={this.changeplayerbox.bind(this)}>

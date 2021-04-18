@@ -14,10 +14,11 @@ def run():
         print(i.Player_Name)
 
 
-        temp = list(i.Pos.all().values())
-        b = ''.join(val['Position'] for val in temp)
+        #temp = list(i.Pos.all().values())
+        #b = ''.join(val['Position'] for val in temp)
 
-        i.PosStr = b
+        i.FTeamPos = ""
+        i.FTeam = None
 
         i.save()
 
