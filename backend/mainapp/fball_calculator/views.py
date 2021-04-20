@@ -97,6 +97,25 @@ def playersByPositionHelper(avail):
 
     return dump
 
+@api_view(['PUT'])
+def removeFromTeam(request):
+    if request.method == 'PUT':
+        
+        data = json.loads(request.body)
+        try:
+            player = Player.objects.get(Player_Name = data['playerid'])
+        except Player.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        player.FTeamPos = ""
+        player.FTeam = None
+
+        player.save()
+
+        dump = playersByPositionHelper("1")
+
+        return HttpResponse(dump, content_type='application/json')
+
 
 @api_view(['PUT'])
 def addplayer(request):

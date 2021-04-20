@@ -102,8 +102,47 @@ class Team extends Component {
           text: 'TOV',
           sort: true
         },
+        {
+          text: '',
+          dataField: '',
+          formatter: (cell, row) => {
+            return (    
+              <div>
+                <Button variant="outline-danger" key={row.Player_Name} onClick={() => this.removeplayer(row.Player_Name)}>
+                    X
+                </Button>
+              </div>
+            )
+          }
+        },
       ]
     }
+
+    removeplayer(id){
+      if(id){
+          const info = {
+            playerid: id,
+          };
+          axios.put('/removeplayer/',info)      
+          .then(response => {
+            axios.get('/team/' + this.props.match.params.id)
+            .then(response2 => {
+                this.setState({
+                  guards: response.data.guards,
+                  forwards: response.data.forwards,
+                  centers: response.data.centers,
+                  all: response.data.all,
+                  rosterguards: response2.data.guards,
+                  rosterforwards:response2.data.forwards,
+                  rostercenters:response2.data.centers,
+                  rosterutils:response2.data.utils,
+                });
+            });
+          });
+      }
+    }
+
+    
   
     componentDidMount() {
       axios.get('/team/' + this.props.match.params.id)
@@ -157,33 +196,53 @@ class Team extends Component {
           playerbox: event.target.value,
       })
     }
+
+    checkrosterspots(){
+        switch(this.state.posbox) {
+          case 'guard':
+            return this.state.rosterguards.length < 3;
+          case 'forward':
+            return this.state.rosterforwards.length < 3;
+          case 'center':
+            return this.state.rostercenters.length < 2;
+          case 'util':
+            return this.state.rosterutils.length < 5;
+          default:
+            return false;
+        }
+    }
     
     addPlayer(event) {
       event.preventDefault();
-      const info = {
+      if(this.checkrosterspots()&&(this.state.posbox)&&(this.state.playerbox)){
+        const info = {
           name: this.state.playerbox,
           teamid: this.props.match.params.id,
           pos: this.state.posbox,
-      };
-      axios.put('/addplayer/',info)      
-        .then(response => {
-          axios.get('/team/' + this.props.match.params.id)
-          .then(response2 => {
-              this.setState({
-                guards: response.data.guards,
-                forwards: response.data.forwards,
-                centers: response.data.centers,
-                all: response.data.all,
-                posbox: "",
-                playerbox: "",
-                choiceplayers: [],
-                rosterguards: response2.data.guards,
-                rosterforwards:response2.data.forwards,
-                rostercenters:response2.data.centers,
-                rosterutils:response2.data.utils,
-              });
+        };
+        axios.put('/addplayer/',info)      
+          .then(response => {
+            axios.get('/team/' + this.props.match.params.id)
+            .then(response2 => {
+                this.setState({
+                  guards: response.data.guards,
+                  forwards: response.data.forwards,
+                  centers: response.data.centers,
+                  all: response.data.all,
+                  posbox: "",
+                  playerbox: "",
+                  choiceplayers: [],
+                  rosterguards: response2.data.guards,
+                  rosterforwards:response2.data.forwards,
+                  rostercenters:response2.data.centers,
+                  rosterutils:response2.data.utils,
+                });
+            });
           });
-        });
+      }
+      else{
+          console.log("error adding");
+      }
     }
     
     render() {
@@ -217,7 +276,7 @@ class Team extends Component {
           columns={ this.state.columns }
           />
 
-          <h4>Utility ({this.state.rosterutils.length}/2)</h4>
+          <h4>Utility ({this.state.rosterutils.length}/5)</h4>
           <BootstrapTable 
           striped
           hover

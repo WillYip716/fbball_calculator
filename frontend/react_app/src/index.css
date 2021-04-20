@@ -17,3 +17,12 @@
 .table{
     font-size: .75rem;
 }
+
+
+.react-bootstrap-table table{
+    table-layout: auto !important;
+}
+
+.btn{
+    padding: revert;
+}
