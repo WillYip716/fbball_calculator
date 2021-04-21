@@ -10,14 +10,40 @@ from .serializer import PlayerSerializer, TeamSerializer, PositionsSerializer
 
 
 
-def calculate(request):
+def calculate(request,aot):
 
-    games = pd.DataFrame(list(Player.objects.filter(BLK__gt = 2).values()))
+    teams = Team.objects.all()
+    rosters = []
+    traverser = ["GP","FGM","FGA","FG3M","FTM","FTA","REB","AST","STL","BLK","TOV","PTS"]
+    for t in teams:
 
-    output = games.to_json(orient="table")
-    parsed = json.loads(output)
+        p_df = pd.DataFrame(list(t.player_set.all().values("GP","FGM","FGA","FG3M","FTM","FTA","REB","AST","STL","BLK","TOV","PTS")))
+        
+        if aot == "total":
+            for i in traverser:
+                if i != "GP":
+                    p_df[i] = (72 - p_df.GP) * p_df[i]
+        
 
-    dump = json.dumps(parsed["data"])
+        sum_column = p_df.sum(axis=0)
+
+
+        data = {
+            "id": t.id,
+            'team': t.name,
+            'FG_PCT': "{:.2f}".format(sum_column.FGM / sum_column.FGA),
+            'FG3M':  "{:.2f}".format(sum_column.FG3M),
+            'FT_PCT': "{:.2f}".format(sum_column.FTM / sum_column.FTA),
+            'REB': "{:.2f}".format(sum_column.REB),
+            'AST': "{:.2f}".format(sum_column.AST),
+            'STL': "{:.2f}".format(sum_column.STL),
+            'BLK': "{:.2f}".format(sum_column.BLK),
+            'TOV': "{:.2f}".format(sum_column.TOV),
+            'PTS': "{:.2f}".format(sum_column.PTS),
+        }
+        rosters.append(data)
+
+    dump = json.dumps(rosters)
 
     return HttpResponse(dump, content_type='application/json')
 

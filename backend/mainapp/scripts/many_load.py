@@ -21,6 +21,11 @@ def run():
 
         p = Player(PLAYER_ID = j.PLAYER_ID,Player_Name=j.PLAYER_NAME, Team_ID=j.TEAM_ID, Team_Name=j.TEAM_ABBREVIATION, GP=j.GP, MIN=j.MIN, FGM=j.FGM, FGA=j.FGA, FG_PCT=j.FG_PCT, FG3M=j.FG3M, FG3A=j.FG3A, FG3_PCT=j.FG3_PCT, FTM=j.FTM, FTA=j.FTA, FT_PCT=j.FT_PCT, OREB=j.OREB, DREB=j.DREB, REB=j.REB, AST=j.AST, STL=j.STL, BLK=j.BLK, TOV=j.TOV, PF=j.PF, PTS=j.PTS)
         
+        obj, created = Person.objects.update_or_create(
+            first_name='John', last_name='Lennon',
+            defaults={'first_name': 'Bob'},
+        )
+
         try:
             p = Player.objects.get(PLAYER_ID = j.PLAYER_ID)
         except Player.DoesNotExist:

@@ -2,25 +2,14 @@ import React, { Component } from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios';
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
-import paginationFactory from 'react-bootstrap-table2-paginator';
 
-class Home extends Component {
+class Rankings extends Component {
   state = {
-    players: [],
+    teams: [],
     columns: [
       {
-        dataField: 'Player_Name',
-        text: 'Name',
-        sort: true
-      },
-      {
-        dataField: 'PosStr',
-        text: 'Pos.',
-        sort: true
-      },
-      {
-        dataField: 'GP',
-        text: 'GP',
+        dataField: 'team',
+        text: 'Team Name',
         sort: true
       },
       {
@@ -29,38 +18,18 @@ class Home extends Component {
         sort: true
       },
       {
-        dataField: 'FGM',
-        text: 'FGM',
-        sort: true
-      },
-      {
-        dataField: 'FGA',
-        text: 'FGA',
-        sort: true
-      },
-      {
         dataField: 'FG_PCT',
         text: 'FG%',
-        sort: true
-      }, 
-      {
-        dataField: 'FG3M',
-        text: '3PTM',
-        sort: true
-      },
-      {
-        dataField: 'FTM',
-        text: 'FTM',
-        sort: true
-      },
-      {
-        dataField: 'FTA',
-        text: 'FTA',
         sort: true
       },
       {
         dataField: 'FT_PCT',
         text: 'FT%',
+        sort: true
+      }, 
+      {
+        dataField: 'FG3M',
+        text: '3PTM',
         sort: true
       },
       {
@@ -92,10 +61,10 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    axios.get('/api/player')
+    axios.get('/calculate/total')
       .then(response => {
         this.setState({
-          players: response.data
+            teams: response.data
         });
       });
   }
@@ -103,17 +72,17 @@ class Home extends Component {
   render() {
     return (
       <div className="container">
+        <h3>Team Projected Rankings</h3>
         <BootstrapTable 
         striped
         hover
         keyField='id' 
-        data={ this.state.players } 
+        data={ this.state.teams } 
         columns={ this.state.columns }
-        pagination={ paginationFactory() }
         />
       </div>
     );
   }
 }
 
-export default Home;
+export default Rankings;
