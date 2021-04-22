@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios';
-import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
+import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
+import ToggleButton from 'react-bootstrap/ToggleButton';
+import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 
 class Rankings extends Component {
   state = {
-    teams: [],
+    avg: [],
+    tot: [],
+    toggle: "average",
     columns: [
       {
         dataField: 'team',
@@ -61,25 +65,49 @@ class Rankings extends Component {
   }
 
   componentDidMount() {
-    axios.get('/calculate/total')
+    axios.get('/calculate')
       .then(response => {
         this.setState({
-            teams: response.data
+            avg: response.data.avg,
+            tot: response.data.tot,
         });
       });
   }
+
+  changetog(val) {
+    this.setState({
+        toggle: val,
+    })
+  }
   
   render() {
+
     return (
       <div className="container">
         <h3>Team Projected Rankings</h3>
-        <BootstrapTable 
-        striped
-        hover
-        keyField='id' 
-        data={ this.state.teams } 
-        columns={ this.state.columns }
-        />
+
+        <ToggleButtonGroup type="radio" name="options" defaultValue="average" onChange={this.changetog.bind(this)}>
+          <ToggleButton value="average" style={{padding: "5px"}}>Team Average</ToggleButton>
+          <ToggleButton value="total" style={{padding: "5px"}}>Team Remaining Total</ToggleButton>
+        </ToggleButtonGroup>
+        <div className={this.state.toggle === "total" ? 'hidden' : ''}>
+            <BootstrapTable 
+            striped
+            hover
+            keyField='id' 
+            data={ this.state.avg } 
+            columns={ this.state.columns }
+            />
+        </div>
+        <div className={this.state.toggle === "average" ? 'hidden' : ''}>
+            <BootstrapTable 
+            striped
+            hover
+            keyField='id' 
+            data={ this.state.tot } 
+            columns={ this.state.columns }
+            />
+        </div>
       </div>
     );
   }

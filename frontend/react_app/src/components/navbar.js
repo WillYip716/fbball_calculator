@@ -30,6 +30,7 @@ function NavbarComp(){
                 </NavDropdown>
             </Nav>
             <Nav>
+                <Nav.Link href="/rankings">Rankings</Nav.Link>
                 <Nav.Link href="/about">About</Nav.Link>
             </Nav>
         </Navbar>

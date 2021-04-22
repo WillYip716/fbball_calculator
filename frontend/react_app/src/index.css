@@ -18,6 +18,9 @@
     font-size: .75rem;
 }
 
+.hidden { 
+    display:none; 
+}
 
 .react-bootstrap-table table{
     table-layout: auto !important;

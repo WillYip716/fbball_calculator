@@ -10,25 +10,20 @@ from .serializer import PlayerSerializer, TeamSerializer, PositionsSerializer
 
 
 
-def calculate(request,aot):
+def calculate(request):
 
     teams = Team.objects.all()
-    rosters = []
+    avgroster = []
+    totalroster = []
     traverser = ["GP","FGM","FGA","FG3M","FTM","FTA","REB","AST","STL","BLK","TOV","PTS"]
     for t in teams:
 
         p_df = pd.DataFrame(list(t.player_set.all().values("GP","FGM","FGA","FG3M","FTM","FTA","REB","AST","STL","BLK","TOV","PTS")))
-        
-        if aot == "total":
-            for i in traverser:
-                if i != "GP":
-                    p_df[i] = (72 - p_df.GP) * p_df[i]
-        
 
         sum_column = p_df.sum(axis=0)
 
 
-        data = {
+        avgdata = {
             "id": t.id,
             'team': t.name,
             'FG_PCT': "{:.2f}".format(sum_column.FGM / sum_column.FGA),
@@ -37,11 +32,52 @@ def calculate(request,aot):
             'REB': "{:.2f}".format(sum_column.REB),
             'AST': "{:.2f}".format(sum_column.AST),
             'STL': "{:.2f}".format(sum_column.STL),
-            'BLK': "{:.2f}".format(sum_column.BLK),
+            'BLK': round(sum_column.BLK, 2), #"{:.2f}".format(sum_column.BLK),
             'TOV': "{:.2f}".format(sum_column.TOV),
             'PTS': "{:.2f}".format(sum_column.PTS),
         }
-        rosters.append(data)
+        avgroster.append(avgdata)
+
+        for i in traverser:
+                if i != "GP":
+                    p_df[i] = (14) * p_df[i]
+        
+        sum_column = p_df.sum(axis=0)
+
+
+        totdata = {
+            "id": t.id,
+            'team': t.name,
+            'FG_PCT': "{:.2f}".format(sum_column.FGM / sum_column.FGA),
+            'FG3M':  "{:.2f}".format(sum_column.FG3M),
+            'FT_PCT': "{:.2f}".format(sum_column.FTM / sum_column.FTA),
+            'REB': "{:.2f}".format(sum_column.REB),
+            'AST': "{:.2f}".format(sum_column.AST),
+            'STL': "{:.2f}".format(sum_column.STL),
+            'BLK': round(sum_column.BLK, 2),#"{:.2f}".format(sum_column.BLK),
+            'TOV': "{:.2f}".format(sum_column.TOV),
+            'PTS': "{:.2f}".format(sum_column.PTS),
+        }
+        totalroster.append(totdata)
+    
+    rankavg = pd.DataFrame(avgroster)
+    ranktot = pd.DataFrame(totalroster)
+    traverser2 = ["FG_PCT","FG3M","FT_PCT","REB","AST","STL","BLK","TOV","PTS"]
+    
+    for j in traverser2:
+            rankavg[j] = rankavg[j].rank(method='max')
+            ranktot[j] = ranktot[j].rank(method='max')
+    
+    rankavg["rottotal"] = rankavg.sum(axis=1)
+    ranktot["rottotal"] = ranktot.sum(axis=1)
+
+
+    rosters = {
+        "avg": avgroster,
+        "tot": totalroster,
+        "rankavg": rankavg.values.tolist(),
+        "ranktot": ranktot.values.tolist(),
+    }
 
     dump = json.dumps(rosters)
 
