@@ -75,13 +75,47 @@ def calculate(request):
     rosters = {
         "avg": avgroster,
         "tot": totalroster,
-        "rankavg": rankavg.values.tolist(),
-        "ranktot": ranktot.values.tolist(),
+        "rankavg": rankavg.to_dict('records'),
+        "ranktot": ranktot.to_dict('records'),
     }
 
     dump = json.dumps(rosters)
 
     return HttpResponse(dump, content_type='application/json')
+
+
+
+def average(request):
+
+    p = Player.objects.exclude(FTeam__isnull=True)
+
+    g = pd.DataFrame(p.filter(Pos__Position='G').values())
+    f = pd.DataFrame(p.filter(Pos__Position='F').values())
+    c = pd.DataFrame(p.filter(Pos__Position='C').values())
+    a = pd.DataFrame(p.values())
+
+    avf = pd.DataFrame(columns = a.columns, index = ['g', 'f', 'c','a'])
+
+    avf.loc['g'] = g.mean()
+    avf.loc['f'] = f.mean()
+    avf.loc['c'] = c.mean()
+    avf.loc['a'] = a.mean()
+
+    avf = avf[["FGM","FGA","FG_PCT","FG3M","FTM","FTA","FT_PCT","REB","AST","STL","BLK","TOV","PTS"]]
+    avf["FG_PCT"] = avf["FGM"]/avf["FGA"]
+    avf["FT_PCT"] = avf["FTM"]/avf["FTA"]
+    avf = avf.astype(float).round(2)
+    avf["id"] = ["Guards","Forwards","Centers","All"]
+    avf["count"] = [g.shape[0],f.shape[0],c.shape[0],a.shape[0]]
+    
+
+    data = {
+        "avg": avf.to_dict('records'),
+    }
+
+    dump = json.dumps(data)
+    return HttpResponse(dump, content_type='application/json')
+
 
 
 def roster(request,teamid):

@@ -29,3 +29,7 @@
 .btn{
     padding: revert;
 }
+
+.btn-group{
+    margin-bottom: 20px;
+}

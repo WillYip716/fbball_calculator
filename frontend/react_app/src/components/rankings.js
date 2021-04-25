@@ -9,7 +9,66 @@ class Rankings extends Component {
   state = {
     avg: [],
     tot: [],
+    avgrank: [],
+    totrank: [],
     toggle: "average",
+    rankcolumns: [
+      {
+        dataField: 'team',
+        text: 'Team Name',
+        sort: true
+      },
+      {
+        dataField: 'PTS',
+        text: 'PTS RNK',
+        sort: true
+      },
+      {
+        dataField: 'FG_PCT',
+        text: 'FG% RNK',
+        sort: true
+      },
+      {
+        dataField: 'FT_PCT',
+        text: 'FT% RNK',
+        sort: true
+      }, 
+      {
+        dataField: 'FG3M',
+        text: '3PTM RNK',
+        sort: true
+      },
+      {
+        dataField: 'REB',
+        text: 'REB RNK',
+        sort: true
+      },
+      {
+        dataField: 'AST',
+        text: 'AST RNK',
+        sort: true
+      },
+      {
+        dataField: 'STL',
+        text: 'STL RNK',
+        sort: true
+      },
+      {
+        dataField: 'BLK',
+        text: 'BLK RNK',
+        sort: true
+      },
+      {
+        dataField: 'TOV',
+        text: 'TOV RNK',
+        sort: true
+      },
+      {
+        dataField: 'rottotal',
+        text: 'ROT Score',
+        sort: true
+      },
+    ],
     columns: [
       {
         dataField: 'team',
@@ -70,6 +129,8 @@ class Rankings extends Component {
         this.setState({
             avg: response.data.avg,
             tot: response.data.tot,
+            avgrank: response.data.rankavg,
+            totrank: response.data.ranktot,
         });
       });
   }
@@ -84,13 +145,16 @@ class Rankings extends Component {
 
     return (
       <div className="container">
-        <h3>Team Projected Rankings</h3>
+        <h1>Rankings</h1>
 
         <ToggleButtonGroup type="radio" name="options" defaultValue="average" onChange={this.changetog.bind(this)}>
-          <ToggleButton value="average" style={{padding: "5px"}}>Team Average</ToggleButton>
-          <ToggleButton value="total" style={{padding: "5px"}}>Team Remaining Total</ToggleButton>
+          <ToggleButton value="average" style={{padding: "5px",border: "black 1px solid"}}>Team Average</ToggleButton>
+          <ToggleButton value="total" style={{padding: "5px", border: "black 1px solid"}}>Team Remaining Total</ToggleButton>
+          <ToggleButton value="avgrank" style={{padding: "5px", border: "black 1px solid"}}>Team Average Rank</ToggleButton>
+          <ToggleButton value="totrank" style={{padding: "5px", border: "black 1px solid"}}>Team Total Rank</ToggleButton>
         </ToggleButtonGroup>
-        <div className={this.state.toggle === "total" ? 'hidden' : ''}>
+        <div className={this.state.toggle !== "average" ? 'hidden' : ''}>
+            <h3>Team Average Stats </h3>
             <BootstrapTable 
             striped
             hover
@@ -99,13 +163,34 @@ class Rankings extends Component {
             columns={ this.state.columns }
             />
         </div>
-        <div className={this.state.toggle === "average" ? 'hidden' : ''}>
+        <div className={this.state.toggle !== "total" ? 'hidden' : ''}>
+            <h3>Totals Future Stats</h3>
             <BootstrapTable 
             striped
             hover
             keyField='id' 
             data={ this.state.tot } 
             columns={ this.state.columns }
+            />
+        </div>
+        <div className={this.state.toggle !== "avgrank" ? 'hidden' : ''}>
+            <h3>Average Stats Rankings</h3>
+            <BootstrapTable 
+            striped
+            hover
+            keyField='id' 
+            data={ this.state.avgrank } 
+            columns={ this.state.rankcolumns }
+            />
+        </div>
+        <div className={this.state.toggle !== "totrank" ? 'hidden' : ''}>
+            <h3>Total Stats Rankings</h3>
+            <BootstrapTable 
+            striped
+            hover
+            keyField='id' 
+            data={ this.state.totrank } 
+            columns={ this.state.rankcolumns }
             />
         </div>
       </div>
