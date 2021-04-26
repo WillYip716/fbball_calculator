@@ -5,6 +5,22 @@ from django.db import models
 class Positions(models.Model):
     Position = models.CharField(max_length=1, unique=True)
 
+class AvrComp(models.Model):
+    Pos = models.CharField(max_length=1)
+    FGM = models.FloatField()
+    FGA = models.FloatField()
+    FG_PCT = models.FloatField()
+    FG3M = models.FloatField()
+    FTM = models.FloatField()
+    FTA = models.FloatField()
+    FT_PCT = models.FloatField()
+    REB = models.FloatField()
+    AST = models.FloatField()
+    STL = models.FloatField()
+    BLK = models.FloatField()
+    TOV = models.FloatField()
+    PTS = models.FloatField()
+
 class Player(models.Model):
     PLAYER_ID = models.IntegerField()
     Player_Name = models.CharField(max_length=255)

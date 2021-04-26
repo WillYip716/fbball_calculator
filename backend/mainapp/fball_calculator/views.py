@@ -4,8 +4,8 @@ import json
 from rest_framework.decorators import api_view
 from rest_framework import serializers, viewsets, status
 from django.http import HttpResponse
-from fball_calculator.models import Player,Team,Positions
-from .serializer import PlayerSerializer, TeamSerializer, PositionsSerializer
+from fball_calculator.models import Player,Team,Positions, AvrComp
+from .serializer import PlayerSerializer, TeamSerializer, PositionsSerializer, AvrCompSerializer
 #from fball_calculator.models import Game
 
 
@@ -84,8 +84,57 @@ def calculate(request):
     return HttpResponse(dump, content_type='application/json')
 
 
+def updateAvrComp():
+    p = Player.objects.exclude(FTeam__isnull=True)
 
-def average(request):
+    g = pd.DataFrame(p.filter(Pos__Position='G').values())
+    f = pd.DataFrame(p.filter(Pos__Position='F').values())
+    c = pd.DataFrame(p.filter(Pos__Position='C').values())
+    a = pd.DataFrame(p.values())
+
+    avf = pd.DataFrame(columns = a.columns, index = ['G', 'F', 'C','A'])
+
+    avf.loc['G'] = g.mean()
+    avf.loc['F'] = f.mean()
+    avf.loc['C'] = c.mean()
+    avf.loc['A'] = a.mean()
+
+    avf = avf[["FGM","FGA","FG_PCT","FG3M","FTM","FTA","FT_PCT","REB","AST","STL","BLK","TOV","PTS"]]
+    avf["FG_PCT"] = avf["FGM"]/avf["FGA"]
+    avf["FT_PCT"] = avf["FTM"]/avf["FTA"]
+    avf = avf.astype(float).round(2)
+
+    for i,j in avf.iterrows():
+        print(i)
+        obj, created = AvrComp.objects.update_or_create(
+            Pos = i,
+            defaults={"FGM":j.FGM,"FGA":j.FGA,"FG_PCT":j.FG_PCT,"FG3M":j.FG3M,"FTM":j.FTM,"FTA":j.FTA,"FT_PCT":j.FT_PCT,"REB":j.REB,"AST":j.AST,"STL":j.STL,"BLK":j.BLK,"TOV":j.TOV,"PTS":j.PTS},
+        )
+
+    #avf["id"] = ["G","F","C","A"]
+    #avf["count"] = [g.shape[0],f.shape[0],c.shape[0],a.shape[0]]
+
+def raterHelper(t,p):
+
+    avr = AvrComp.objects.get(Pos=p).__dict__
+    outF = t
+    traverser = ["FGM","FGA","FG3M","FTM","FTA","REB","AST","STL","BLK","TOV","PTS"]
+
+    for i in traverser:
+
+        if i=="FGA" or i=="FTA" or i=="TOV":
+            outF[i] = (((outF[i]/avr[i])-1)*(-10)).round(2)
+        else:
+            outF[i] = (((outF[i]/avr[i])-1)*10).round(2)
+    
+    outF["FG_PCT"] = (outF["FGM"]+outF["FGA"]).round(2)
+    outF["FT_PCT"] = (outF["FTM"]+outF["FTA"]).round(2)
+    outF["TotalRating"] = outF["FGM"]+outF["FGA"]+outF["FG3M"]+outF["FTM"]+outF["FTA"]+outF["REB"]+outF["AST"]+outF["STL"]+outF["BLK"]+outF["TOV"]+outF["PTS"]
+
+    return outF
+
+
+def ratings(request):
 
     p = Player.objects.exclude(FTeam__isnull=True)
 
@@ -94,26 +143,19 @@ def average(request):
     c = pd.DataFrame(p.filter(Pos__Position='C').values())
     a = pd.DataFrame(p.values())
 
-    avf = pd.DataFrame(columns = a.columns, index = ['g', 'f', 'c','a'])
-
-    avf.loc['g'] = g.mean()
-    avf.loc['f'] = f.mean()
-    avf.loc['c'] = c.mean()
-    avf.loc['a'] = a.mean()
-
-    avf = avf[["FGM","FGA","FG_PCT","FG3M","FTM","FTA","FT_PCT","REB","AST","STL","BLK","TOV","PTS"]]
-    avf["FG_PCT"] = avf["FGM"]/avf["FGA"]
-    avf["FT_PCT"] = avf["FTM"]/avf["FTA"]
-    avf = avf.astype(float).round(2)
-    avf["id"] = ["Guards","Forwards","Centers","All"]
-    avf["count"] = [g.shape[0],f.shape[0],c.shape[0],a.shape[0]]
-    
+    g = raterHelper(g,"G")
+    f = raterHelper(f,"F")
+    c = raterHelper(c,"C")
+    a = raterHelper(a,"A")
 
     data = {
-        "avg": avf.to_dict('records'),
+        "guards": g.to_dict('records'),
+        "forwards": f.to_dict('records'),
+        "centers": c.to_dict('records'),
+        "all": a.to_dict('records'),
     }
-
     dump = json.dumps(data)
+
     return HttpResponse(dump, content_type='application/json')
 
 
@@ -258,3 +300,7 @@ class TeamViewSet(viewsets.ModelViewSet):
 class PositionsViewSet(viewsets.ModelViewSet):
     queryset = Positions.objects.all()
     serializer_class = PositionsSerializer
+
+class AvrCompViewSet(viewsets.ModelViewSet):
+    queryset = AvrComp.objects.all()
+    serializer_class = AvrCompSerializer
