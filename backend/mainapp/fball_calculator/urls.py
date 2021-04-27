@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import calculate, TeamViewSet, PlayerViewSet,AvrCompViewSet, roster, allRosters,PositionsViewSet,playersByPosition,addplayer,removeFromTeam,ratings
+from .views import calculate, TeamViewSet, PlayerViewSet,AvrCompViewSet, roster, allRosters,PositionsViewSet,playersByPosition,addplayer,removeFromTeam,ratings,allPlayers
 from rest_framework import routers
 from rest_framework.routers import DefaultRouter
 
@@ -21,4 +21,5 @@ urlpatterns = [
     path('addplayer/', addplayer, name = 'api_addplayer'),
     path('removeplayer/', removeFromTeam, name = 'remove_player'),
     path('ratings/', ratings, name = 'ratings'),
+    path('allplayers', allPlayers, name = 'allplayers'),
 ]

@@ -38,6 +38,11 @@ class Team extends Component {
           sort: true
         },
         {
+          dataField: 'TotalRating',
+          text: 'Rating',
+          sort: true
+        },
+        {
           dataField: 'PTS',
           text: 'PTS',
           sort: true
@@ -147,7 +152,7 @@ class Team extends Component {
     componentDidMount() {
       axios.get('/team/' + this.props.match.params.id)
         .then(response1 => {
-          axios.get('/pbp/1' + this.props.match.params.id)
+          axios.get('/pbp/1')
             .then(response2 => {
                 this.setState({
                     teamName: response1.data.team,

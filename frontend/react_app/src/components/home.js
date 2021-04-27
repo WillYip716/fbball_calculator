@@ -24,6 +24,11 @@ class Home extends Component {
         sort: true
       },
       {
+        dataField: 'TotalRating',
+        text: 'Rating',
+        sort: true
+      },
+      {
         dataField: 'PTS',
         text: 'PTS',
         sort: true
@@ -92,10 +97,11 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    axios.get('/api/player')
+    axios.get('/allplayers')
       .then(response => {
+        console.log(response)
         this.setState({
-          players: response.data
+          players: response.data.a,
         });
       });
   }
@@ -103,6 +109,7 @@ class Home extends Component {
   render() {
     return (
       <div className="container">
+        <h1>All Players</h1>
         <BootstrapTable 
         striped
         hover

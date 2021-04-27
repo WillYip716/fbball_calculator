@@ -10,6 +10,24 @@ from .serializer import PlayerSerializer, TeamSerializer, PositionsSerializer, A
 
 
 
+
+def allPlayers(request):
+
+    p = Player.objects.all()
+
+    a = pd.DataFrame(p.values())
+    a = raterHelper(a,"A").sort_values(by=['TotalRating'],ascending=False)
+
+    a['FTeam_id'] = a['FTeam_id'].fillna(0)
+    data = {
+        "a": a.to_dict('records'),
+    }
+    dump = json.dumps(data)
+
+    return HttpResponse(dump, content_type='application/json')
+
+
+
 def calculate(request):
 
     teams = Team.objects.all()
@@ -123,30 +141,35 @@ def raterHelper(t,p):
     for i in traverser:
 
         if i=="FGA" or i=="FTA" or i=="TOV":
-            outF[i] = (((outF[i]/avr[i])-1)*(-10)).round(2)
+            outF[i + "rt"] = (((outF[i]/avr[i])-1)*(-10)).round(2)
         else:
-            outF[i] = (((outF[i]/avr[i])-1)*10).round(2)
+            outF[i + "rt"] = (((outF[i]/avr[i])-1)*10).round(2)
     
-    outF["FG_PCT"] = (outF["FGM"]+outF["FGA"]).round(2)
-    outF["FT_PCT"] = (outF["FTM"]+outF["FTA"]).round(2)
-    outF["TotalRating"] = outF["FGM"]+outF["FGA"]+outF["FG3M"]+outF["FTM"]+outF["FTA"]+outF["REB"]+outF["AST"]+outF["STL"]+outF["BLK"]+outF["TOV"]+outF["PTS"]
+    outF["FG_PCTrt"] = (outF["FGMrt"]+outF["FGArt"]).round(2)
+    outF["FT_PCTrt"] = (outF["FTMrt"]+outF["FTArt"]).round(2)
+    outF["TotalRating"] = (outF["FGMrt"]+outF["FGArt"]+outF["FG3Mrt"]+outF["FTMrt"]+outF["FTArt"]+outF["REBrt"]+outF["ASTrt"]+outF["STLrt"]+outF["BLKrt"]+outF["TOVrt"]+outF["PTSrt"]).round(2)
 
     return outF
 
 
 def ratings(request):
 
-    p = Player.objects.exclude(FTeam__isnull=True)
+    p = Player.objects.all()
 
     g = pd.DataFrame(p.filter(Pos__Position='G').values())
     f = pd.DataFrame(p.filter(Pos__Position='F').values())
     c = pd.DataFrame(p.filter(Pos__Position='C').values())
     a = pd.DataFrame(p.values())
 
-    g = raterHelper(g,"G")
-    f = raterHelper(f,"F")
-    c = raterHelper(c,"C")
-    a = raterHelper(a,"A")
+    g = raterHelper(g,"G").sort_values(by=['TotalRating'],ascending=False)
+    f = raterHelper(f,"F").sort_values(by=['TotalRating'],ascending=False)
+    c = raterHelper(c,"C").sort_values(by=['TotalRating'],ascending=False)
+    a = raterHelper(a,"A").sort_values(by=['TotalRating'],ascending=False)
+
+    g['FTeam_id'] = g['FTeam_id'].fillna(0)
+    f['FTeam_id'] = f['FTeam_id'].fillna(0)
+    c['FTeam_id'] = c['FTeam_id'].fillna(0)
+    a['FTeam_id'] = a['FTeam_id'].fillna(0)
 
     data = {
         "guards": g.to_dict('records'),
@@ -165,19 +188,25 @@ def roster(request,teamid):
     t = Team.objects.get(id=teamid)
     #roster = list(t.player_set.all().values())
     #p = Player.objects.filter(FTeam=t)
+    p = pd.DataFrame(t.player_set.values())
 
-    g = list(t.player_set.filter(FTeamPos='G').values())
+    p = raterHelper(p,"A")
+    g = p[p['FTeamPos']=='G'].sort_values(by=['TotalRating'],ascending=False)
+    f = p[p['FTeamPos']=='F'].sort_values(by=['TotalRating'],ascending=False)
+    c = p[p['FTeamPos']=='C'].sort_values(by=['TotalRating'],ascending=False)
+    u = p[p['FTeamPos']=='U'].sort_values(by=['TotalRating'],ascending=False)
+    """g = list(t.player_set.filter(FTeamPos='G').values())
     f = list(t.player_set.filter(FTeamPos='F').values())
     c = list(t.player_set.filter(FTeamPos='C').values())
-    u = list(t.player_set.filter(FTeamPos='U').values())
+    u = list(t.player_set.filter(FTeamPos='U').values())"""
 
     data = {
         "team": t.name,
         "teamid": t.id,
-        "guards": g,
-        "forwards": f,
-        "centers": c,
-        "utils":u,
+        "guards": g.to_dict('records'),
+        "forwards": f.to_dict('records'),
+        "centers": c.to_dict('records'),
+        "utils":u.to_dict('records'),
     }
     dump = json.dumps(data)
 
