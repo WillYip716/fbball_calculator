@@ -18,7 +18,6 @@ def allPlayers(request):
     a = pd.DataFrame(p.values())
     a = raterHelper(a,"A").sort_values(by=['TotalRating'],ascending=False)
 
-    a['FTeam_id'] = a['FTeam_id'].fillna(0)
     data = {
         "a": a.to_dict('records'),
     }
@@ -136,6 +135,7 @@ def raterHelper(t,p):
 
     avr = AvrComp.objects.get(Pos=p).__dict__
     outF = t
+    outF['FTeam_id'] = outF['FTeam_id'].fillna(0)
     traverser = ["FGM","FGA","FG3M","FTM","FTA","REB","AST","STL","BLK","TOV","PTS"]
 
     for i in traverser:
@@ -147,7 +147,7 @@ def raterHelper(t,p):
     
     outF["FG_PCTrt"] = (outF["FGMrt"]+outF["FGArt"]).round(2)
     outF["FT_PCTrt"] = (outF["FTMrt"]+outF["FTArt"]).round(2)
-    outF["TotalRating"] = (outF["FGMrt"]+outF["FGArt"]+outF["FG3Mrt"]+outF["FTMrt"]+outF["FTArt"]+outF["REBrt"]+outF["ASTrt"]+outF["STLrt"]+outF["BLKrt"]+outF["TOVrt"]+outF["PTSrt"]).round(2)
+    outF["TotalRating"] = (outF["FG_PCTrt"]+outF["FG3Mrt"]+outF["FT_PCTrt"]+outF["REBrt"]+outF["ASTrt"]+outF["STLrt"]+outF["BLKrt"]+outF["TOVrt"]+outF["PTSrt"]).round(2)
 
     return outF
 
@@ -161,15 +161,27 @@ def ratings(request):
     c = pd.DataFrame(p.filter(Pos__Position='C').values())
     a = pd.DataFrame(p.values())
 
-    g = raterHelper(g,"G").sort_values(by=['TotalRating'],ascending=False)
-    f = raterHelper(f,"F").sort_values(by=['TotalRating'],ascending=False)
-    c = raterHelper(c,"C").sort_values(by=['TotalRating'],ascending=False)
-    a = raterHelper(a,"A").sort_values(by=['TotalRating'],ascending=False)
+    g = raterHelper(g,"G")
+    f = raterHelper(f,"F")
+    c = raterHelper(c,"C")
+    a = raterHelper(a,"A")
 
-    g['FTeam_id'] = g['FTeam_id'].fillna(0)
-    f['FTeam_id'] = f['FTeam_id'].fillna(0)
-    c['FTeam_id'] = c['FTeam_id'].fillna(0)
-    a['FTeam_id'] = a['FTeam_id'].fillna(0)
+    hide = request.GET.get('hide', '')
+    if hide:
+        rts = ["FG_PCT","FG3M","FT_PCT","REB","AST","STL","BLK","TOV","PTS"]
+        hide = hide.upper().split(",")
+        for i in hide:
+            if i in rts:
+                g['TotalRating'] = (g['TotalRating'] - g[i+"rt"]).round(2)
+                f['TotalRating'] = (f['TotalRating'] - f[i+"rt"]).round(2)
+                c['TotalRating'] = (c['TotalRating'] - c[i+"rt"]).round(2)
+                a['TotalRating'] = (a['TotalRating'] - a[i+"rt"]).round(2)
+
+    g = g.sort_values(by=['TotalRating'],ascending=False)
+    f = f.sort_values(by=['TotalRating'],ascending=False)
+    c = c.sort_values(by=['TotalRating'],ascending=False)
+    a = a.sort_values(by=['TotalRating'],ascending=False)
+
 
     data = {
         "guards": g.to_dict('records'),

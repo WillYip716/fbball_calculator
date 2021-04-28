@@ -5,6 +5,7 @@ import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import paginationFactory from 'react-bootstrap-table2-paginator';
+const queryString = require('query-string');
 
 class Ratings extends Component {
   state = {
@@ -37,53 +38,67 @@ class Ratings extends Component {
       {
         dataField: 'PTSrt',
         text: 'PTS',
-        sort: true
+        sort: true,
+        hidden: this.columnhider("PTS")
       },
       {
         dataField: 'FG_PCTrt',
         text: 'FG%',
-        sort: true
+        sort: true,
+        hidden: this.columnhider("FG_PCT")
       }, 
       {
         dataField: 'FG3Mrt',
         text: '3PTM',
-        sort: true
+        sort: true,
+        hidden: this.columnhider("FG3M")
       },
       {
         dataField: 'FT_PCTrt',
         text: 'FT%',
-        sort: true
+        sort: true,
+        hidden: this.columnhider("FT_PCT")
       },
       {
         dataField: 'REBrt',
         text: 'REB',
-        sort: true
+        sort: true,
+        hidden: this.columnhider("REB")
       },
       {
         dataField: 'ASTrt',
         text: 'AST',
-        sort: true
+        sort: true,
+        hidden: this.columnhider("AST")
       },
       {
         dataField: 'STLrt',
         text: 'STL',
-        sort: true
+        sort: true,
+        hidden: this.columnhider("STL")
       },
       {
         dataField: 'BLKrt',
         text: 'BLK',
-        sort: true
+        sort: true,
+        hidden: this.columnhider("BLK")
       },
       {
         dataField: 'TOVrt',
         text: 'TOV',
-        sort: true
+        sort: true,
+        hidden: this.columnhider("TOV")
       },
     ]
   }
 
   componentDidMount() {
-    axios.get('/ratings')
+    var params = queryString.parse(this.props.location.search);
+    let q = "";
+    if(params.hide){
+      q = "?hide=" + params.hide;
+    }
+    axios.get('/ratings/' + q)
       .then(response => {
         this.setState({
           guards: response.data.guards,
@@ -99,6 +114,15 @@ class Ratings extends Component {
         toggle: val,
     })
   }
+
+  columnhider(d){
+    var params = queryString.parse(this.props.location.search);
+    if(params.hide){
+      return params.hide.toUpperCase().indexOf(d) > -1;
+    }
+    return false;
+  }
+
   
   render() {
 
