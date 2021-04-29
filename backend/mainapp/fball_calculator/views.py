@@ -154,7 +154,10 @@ def raterHelper(t,p):
 
 def ratings(request):
 
-    p = Player.objects.all()
+    if request.GET.get('avail', '') == "all":
+        p = Player.objects.all()
+    else:
+        p = Player.objects.exclude(FTeam__isnull=False)
 
     g = pd.DataFrame(p.filter(Pos__Position='G').values())
     f = pd.DataFrame(p.filter(Pos__Position='F').values())

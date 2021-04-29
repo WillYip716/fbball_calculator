@@ -5,6 +5,7 @@ import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import paginationFactory from 'react-bootstrap-table2-paginator';
+import { Button, Form } from "react-bootstrap";
 const queryString = require('query-string');
 
 class Ratings extends Component {
@@ -13,7 +14,9 @@ class Ratings extends Component {
     forwards: [],
     centers: [],
     all: [],
-    toggle: "all",
+    av: "available",
+    sfil:[],
+    pos: "all",
     columns: [
       {
         dataField: 'Player_Name',
@@ -94,9 +97,15 @@ class Ratings extends Component {
 
   componentDidMount() {
     var params = queryString.parse(this.props.location.search);
-    let q = "";
+    let q = [];
     if(params.hide){
-      q = "?hide=" + params.hide;
+      q.push("hide=" + params.hide);
+    }
+    if(params.avail){
+      q.push("avail=" + params.avail);
+    }
+    if(q.length){
+      q = "?" + q.join("&")
     }
     axios.get('/ratings/' + q)
       .then(response => {
@@ -109,9 +118,22 @@ class Ratings extends Component {
       });
   }
 
-  changetog(val) {
+  
+  avtog(val) {
     this.setState({
-        toggle: val,
+        av: val,
+    })
+  }
+
+  ptog(val) {
+    this.setState({
+        pos: val,
+    })
+  }
+
+  statstog(val) {
+    this.setState({
+        sfil: val,
     })
   }
 
@@ -123,6 +145,20 @@ class Ratings extends Component {
     return false;
   }
 
+  filterInfo(event){
+      event.preventDefault();
+      let u = [];
+      if(this.state.sfil.length){
+        u.push("hide=" + this.state.sfil.join(","));   
+      }
+      if(this.state.av === "all"){
+        u.push("avail=" + this.state.av);   
+      }
+      if(u.length){
+        this.props.history.push('/ratings/?' + u.join("&"));
+        this.props.history.go();
+      }
+  }
   
   render() {
 
@@ -130,13 +166,32 @@ class Ratings extends Component {
       <div className="container">
         <h1>Players Ratings</h1>
 
-        <ToggleButtonGroup type="radio" name="options" defaultValue="all" onChange={this.changetog.bind(this)}>
+        <ToggleButtonGroup type="radio" name="options" defaultValue="all" onChange={this.ptog.bind(this)}>
           <ToggleButton value="all" style={{padding: "5px",border: "black 1px solid"}}>All</ToggleButton>
           <ToggleButton value="guards" style={{padding: "5px", border: "black 1px solid"}}>Guards</ToggleButton>
           <ToggleButton value="forwards" style={{padding: "5px", border: "black 1px solid"}}>Forwards</ToggleButton>
           <ToggleButton value="centers" style={{padding: "5px", border: "black 1px solid"}}>Centers</ToggleButton>
         </ToggleButtonGroup>
-        <div className={this.state.toggle !== "all" ? 'hidden' : ''}>
+        <br/>
+        <ToggleButtonGroup type="checkbox" onChange={this.statstog.bind(this)} >
+          <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="PTS">PTS</ToggleButton>
+          <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="FG_PCT">FG%</ToggleButton>
+          <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="FG3M">3PTM</ToggleButton>
+          <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="FT_PCT">FT%</ToggleButton>
+          <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="REB">REB</ToggleButton>
+          <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="AST">AST</ToggleButton>
+          <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="STL">STL</ToggleButton>
+          <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="BLK">BLK</ToggleButton>
+          <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="TOV">TOV</ToggleButton>
+        </ToggleButtonGroup>
+        <ToggleButtonGroup type="radio" name="availoptions" onChange={this.avtog.bind(this)} defaultValue="available">
+          <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="available">Available</ToggleButton>
+          <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="all">All</ToggleButton>
+        </ToggleButtonGroup>
+        <Form onSubmit={this.filterInfo.bind(this)} role="form">
+          <Button type="submit">Filter</Button>
+        </Form>
+        <div className={this.state.pos !== "all" ? 'hidden' : ''}>
             <h3>All Players Ratings</h3>
             <BootstrapTable 
             striped
@@ -147,7 +202,7 @@ class Ratings extends Component {
             pagination={ paginationFactory() }
             />
         </div>
-        <div className={this.state.toggle !== "guards" ? 'hidden' : ''}>
+        <div className={this.state.pos !== "guards" ? 'hidden' : ''}>
             <h3>Guards Relative Ratings</h3>
             <BootstrapTable 
             striped
@@ -158,7 +213,7 @@ class Ratings extends Component {
             pagination={ paginationFactory() }
             />
         </div>
-        <div className={this.state.toggle !== "forwards" ? 'hidden' : ''}>
+        <div className={this.state.pos !== "forwards" ? 'hidden' : ''}>
             <h3>Forwards Relative Ratings</h3>
             <BootstrapTable 
             striped
@@ -169,7 +224,7 @@ class Ratings extends Component {
             pagination={ paginationFactory() }
             />
         </div>
-        <div className={this.state.toggle !== "centers" ? 'hidden' : ''}>
+        <div className={this.state.pos !== "centers" ? 'hidden' : ''}>
             <h3>Centers Relative Ratings</h3>
             <BootstrapTable 
             striped
