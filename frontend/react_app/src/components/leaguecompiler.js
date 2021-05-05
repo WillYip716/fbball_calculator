@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form,Button } from "react-bootstrap";
-//import axios from 'axios';
+import axios from 'axios';
 
 
 class LeagueCompiler extends Component {
@@ -28,7 +28,16 @@ class LeagueCompiler extends Component {
                 'players': arr[i].match(rePlayers)
             });
         }
-        console.log(outarr)
+        const info = {
+            teams: outarr
+          };
+          axios.post('/compile',info)      
+            .then(response => {
+                this.setState({
+                    textarea: "",
+                });
+            });
+        //console.log(outarr)
     }
 
     

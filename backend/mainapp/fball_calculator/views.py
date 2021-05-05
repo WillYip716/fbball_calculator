@@ -26,8 +26,16 @@ def allPlayers(request):
     return HttpResponse(dump, content_type='application/json')
 
 
+@api_view(['POST'])
+def compile(request):
+    data = json.loads(request.body)
+    
+    print(data)
 
-def calculate(request):
+    return HttpResponse(status=200)
+
+
+def rankings(request):
 
     teams = Team.objects.all()
     avgroster = []
@@ -82,6 +90,10 @@ def calculate(request):
     traverser2 = ["FG_PCT","FG3M","FT_PCT","REB","AST","STL","BLK","TOV","PTS"]
     
     for j in traverser2:
+        if j == "TOV":
+            rankavg[j] = rankavg[j].rank(method='max',ascending=False)
+            ranktot[j] = ranktot[j].rank(method='max',ascending=False)
+        else:
             rankavg[j] = rankavg[j].rank(method='max')
             ranktot[j] = ranktot[j].rank(method='max')
     

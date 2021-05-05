@@ -124,7 +124,7 @@ class Rankings extends Component {
   }
 
   componentDidMount() {
-    axios.get('/calculate')
+    axios.get('/rankings')
       .then(response => {
         this.setState({
             avg: response.data.avg,
