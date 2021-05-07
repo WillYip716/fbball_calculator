@@ -19,7 +19,7 @@ class LeagueCompiler extends Component {
         let arr = [];
         let outarr = [];
         let reTeam =  new RegExp("([a-zA-Z .'0-9]*)(?=\\nPos)","g");
-        let rePlayers = new RegExp('(?<=\\n)([a-zA-Z .]*) (?=Atl|Bkn|Bos|Cha|Chi|Cle|Dal|Den|Det|GS|Hou|Ind|LAC|LAL|Mem|Mia|Mil|Min|NO|NY|OKC|Orl|Phi|Pho|Por|SA|Sac|Tor|Uta|Was)',"g");
+        let rePlayers = new RegExp("(?<=\\n)([a-zA-Z .']*)(?=[ ](Atl|Bkn|Bos|Cha|Chi|Cle|Dal|Den|Det|GS|Hou|Ind|LAC|LAL|Mem|Mia|Mil|Min|NO|NY|OKC|Orl|Phi|Pho|Por|SA|Sac|Tor|Uta|Was))","g");
         arr = this.state.textarea.split("\n\n");
         arr = arr.filter((i) => (i.indexOf("Pos")>-1));
         for(let i = 0; i < arr.length; i++){
@@ -30,13 +30,14 @@ class LeagueCompiler extends Component {
         }
         const info = {
             teams: outarr
-          };
-          axios.post('/compile',info)      
-            .then(response => {
-                this.setState({
-                    textarea: "",
-                });
+        };
+        axios.post('/compile',info)      
+        .then(response => {
+            console.log(response.data);
+            this.setState({
+                textarea: "",
             });
+        });
         //console.log(outarr)
     }
 

@@ -1,5 +1,6 @@
 from django.urls import path, include
-from .views import rankings, TeamViewSet, PlayerViewSet,AvrCompViewSet, roster, allRosters,PositionsViewSet,playersByPosition,addplayer,removeFromTeam,ratings,allPlayers,compile
+from .viewsV2 import compile
+from .views import rankings, TeamViewSet, PlayerViewSet,AvrCompViewSet, roster, allRosters,PositionsViewSet,playersByPosition,addplayer,removeFromTeam,ratings,allPlayers
 from rest_framework import routers
 from rest_framework.routers import DefaultRouter
 

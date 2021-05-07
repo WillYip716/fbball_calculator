@@ -26,15 +26,6 @@ def allPlayers(request):
     return HttpResponse(dump, content_type='application/json')
 
 
-@api_view(['POST'])
-def compile(request):
-    data = json.loads(request.body)
-    
-    print(data)
-
-    return HttpResponse(status=200)
-
-
 def rankings(request):
 
     teams = Team.objects.all()
@@ -299,7 +290,7 @@ def removeFromTeam(request):
         try:
             player = Player.objects.get(Player_Name = data['playerid'])
         except Player.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         
         player.FTeamPos = ""
         player.FTeam = None
@@ -319,7 +310,7 @@ def addplayer(request):
         try:
             player = Player.objects.get(Player_Name = data['name'])
         except Player.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         
         team = Team.objects.get(id = data['teamid'])
         player.FTeam = team
