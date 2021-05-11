@@ -26,6 +26,7 @@ def compile(request):
     
     
     g = raterHelper(avrF[avrF.Pos.eq("G")],"G")
+    #print(g.to_dict('records'))
     f = raterHelper(avrF[avrF.Pos.eq("F")],"F")
     c = raterHelper(avrF[avrF.Pos.eq("C")],"C")
     a = raterHelper(avrF[avrF.Pos.eq("A")],"A")
@@ -44,12 +45,13 @@ def compile(request):
 
     rankings = rankingsHelper(data)
     data = {
-        #"ratings": ratings,
-        #"avr": avrF.to_dict("records"),
+        "ratings": ratings,
+        "avr": avrF.to_dict("records"),
         "rankings": rankings
     }
-    dump = json.dumps(data)
 
+    dump = json.dumps(data)
+    #print(data)
     return HttpResponse(dump, content_type='application/json')
     #return HttpResponse(status=200)
     
@@ -79,20 +81,21 @@ def avrFrames(teamsdf):
 def raterHelper(a,p):
 
     avr = a
+    
     if p=="A":
         outF = pd.DataFrame(Player.objects.all().values())
     else:
         outF = pd.DataFrame(Player.objects.filter(Pos__Position=p).values())
-
+    
     outF['FTeam_id'] = outF['FTeam_id'].fillna(0)
     traverser = ["FGM","FGA","FG3M","FTM","FTA","REB","AST","STL","BLK","TOV","PTS"]
 
     for i in traverser:
-
+        
         if i=="FGA" or i=="FTA" or i=="TOV":
-            outF[i + "rt"] = (((outF[i]/avr[i])-1)*(-10)).round(2)
+            outF[i + "rt"] = (((outF[i]/float(avr[i]))-1)*(-10)).round(2)
         else:
-            outF[i + "rt"] = (((outF[i]/avr[i])-1)*10).round(2)
+            outF[i + "rt"] = (((outF[i]/float(avr[i]))-1)*10).round(2)
     
     outF["FG_PCTrt"] = (outF["FGMrt"]+outF["FGArt"]).round(2)
     outF["FT_PCTrt"] = (outF["FTMrt"]+outF["FTArt"]).round(2)

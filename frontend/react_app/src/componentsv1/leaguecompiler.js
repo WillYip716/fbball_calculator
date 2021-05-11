@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Form,Button } from "react-bootstrap";
-//import axios from 'axios';
-import { compile } from "../redux/actions";
-import { connect } from "react-redux";
+import axios from 'axios';
 
 
 class LeagueCompiler extends Component {
@@ -33,8 +31,13 @@ class LeagueCompiler extends Component {
         const info = {
             teams: outarr
         };
-        console.log("compile button pressed");
-        this.props.compile(info);
+        axios.post('/compile',info)      
+        .then(response => {
+            console.log(response.data);
+            this.setState({
+                textarea: "",
+            });
+        });
         //console.log(outarr)
     }
 
@@ -54,11 +57,4 @@ class LeagueCompiler extends Component {
     }
   }
   
-
-
-  
-
-  export default connect(
-    null,
-    { compile }
-  )(LeagueCompiler);
+  export default LeagueCompiler;
