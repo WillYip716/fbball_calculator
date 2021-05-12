@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
-import axios from 'axios';
+//import axios from 'axios';
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
 import paginationFactory from 'react-bootstrap-table2-paginator';
+import { connect } from "react-redux";
 
 class Home extends Component {
   state = {
-    players: [],
     columns: [
       {
         dataField: 'Player_Name',
@@ -96,7 +96,7 @@ class Home extends Component {
     ]
   }
 
-  componentDidMount() {
+  /*componentDidMount() {
     axios.get('/allplayers')
       .then(response => {
         console.log(response)
@@ -104,23 +104,36 @@ class Home extends Component {
           players: response.data.a,
         });
       });
-  }
+  }*/
   
   render() {
     return (
       <div className="container">
         <h1>All Players</h1>
-        <BootstrapTable 
-        striped
-        hover
-        keyField='id' 
-        data={ this.state.players } 
-        columns={ this.state.columns }
-        pagination={ paginationFactory() }
-        />
+        {this.props.players.ratings.all ?
+            <BootstrapTable 
+            striped
+            hover
+            keyField='id' 
+            data={ this.props.players.ratings.all } 
+            columns={ this.state.columns }
+            pagination={ paginationFactory() }
+            />
+          :<h3>nothing yet</h3>
+        }
       </div>
     );
   }
 }
 
-export default Home;
+const mapStateToProps = state => {
+  console.log(state);
+  return {
+    players: state.comp
+  };
+};
+
+
+export default connect(
+  mapStateToProps
+)(Home);

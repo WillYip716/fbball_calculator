@@ -1,28 +1,29 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Form,Button } from "react-bootstrap";
 //import axios from 'axios';
 import { compile } from "../redux/actions";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useHistory } from 'react-router-dom';
 
 
-class LeagueCompiler extends Component {
-    state = {
-      textarea: "",
-    }
+function LeagueCompiler(){
 
-    handleChange = (event) => {    
-        this.setState({
-            textarea: event.target.value,
-        });
+    const [textarea, setText] = useState("");
+    const history = useHistory();
+    const dispatch = useDispatch();
+
+    let handleChange = (event) => {    
+
+        setText(event.target.value)
     }
     
-    handleSubmit = (event) => {  
+    let handleSubmit = (event) => {  
         event.preventDefault(); 
         let arr = [];
         let outarr = [];
         let reTeam =  new RegExp("([a-zA-Z .'0-9]*)(?=\\nPos)","g");
         let rePlayers = new RegExp("(?<=\\n)([a-zA-Z .']*)(?=[ ](Atl|Bkn|Bos|Cha|Chi|Cle|Dal|Den|Det|GS|Hou|Ind|LAC|LAL|Mem|Mia|Mil|Min|NO|NY|OKC|Orl|Phi|Pho|Por|SA|Sac|Tor|Uta|Was))","g");
-        arr = this.state.textarea.split("\n\n");
+        arr = textarea.split("\n\n");
         arr = arr.filter((i) => (i.indexOf("Pos")>-1));
         for(let i = 0; i < arr.length; i++){
             outarr.push({
@@ -34,31 +35,33 @@ class LeagueCompiler extends Component {
             teams: outarr
         };
         console.log("compile button pressed");
-        this.props.compile(info);
+        
+        dispatch(compile(info));
+        history.push("/");
         //console.log(outarr)
     }
 
     
     
-    render() {
-      return (
-        <div className="container">
-            <Form onSubmit={this.handleSubmit} style={{textAlign:"center", margin:"auto"}}role="form">
-                <textarea style={{width: "80%",margin:"auto", height: "500px"}} value={this.state.textarea} onChange={this.handleChange} />
-                <br/>
-                <Button type="submit">Compile</Button>
-            </Form>
-        </div>
-        
-      );
-    }
+
+    return (
+      <div className="container">
+          <Form onSubmit={handleSubmit} style={{textAlign:"center", margin:"auto"}}role="form">
+              <textarea style={{width: "80%",margin:"auto", height: "500px"}} value={textarea} onChange={handleChange} />
+              <br/>
+              <Button type="submit">Compile</Button>
+          </Form>
+      </div>
+      
+    );
+
   }
   
 
-
+  export default LeagueCompiler;
   
 
-  export default connect(
+  /*export default connect(
     null,
     { compile }
-  )(LeagueCompiler);
+  )(LeagueCompiler);*/
