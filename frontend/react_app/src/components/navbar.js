@@ -1,36 +1,29 @@
-import React,{ useState, useEffect } from 'react';
+import React from 'react';
 import {Navbar, Nav, NavDropdown} from 'react-bootstrap';
-import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux'
+
 
 function NavbarComp(){
 
-    const [teams, setTeams] = useState([]);
-
-    useEffect(()=>{
-        async function fetchdata(){
-            
-            axios.get('/teams/')
-            .then(res => {
-                const rosters = res.data;
-                setTeams(rosters);
-            })
-        }
-        fetchdata();
-    },[])
+    const teams = useSelector(state => state.comp.rankings.avg)
     
     return(
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-            <Navbar.Brand href="/">Fantasy Basketball Calculator</Navbar.Brand>
+            <Navbar.Brand as={Link} to="/">Fantasy Basketball Calculator</Navbar.Brand>
             <Nav style={{marginRight:"auto"}}>
                 <NavDropdown title="Rosters" id="collasible-nav-dropdown">
-                    <NavDropdown.Item href="/rosters">All</NavDropdown.Item>
-                    {teams.map(item => (
-                        <NavDropdown.Item href={"/team/" + item.teamid} key={item.team}>{item.team}</NavDropdown.Item>
-                    ))}
+                    <NavDropdown.Item as={Link} to="/rosters">All</NavDropdown.Item>
+                    {teams ?
+                        teams.map(item => (
+                            <NavDropdown.Item as={Link} to={"/team/" + item.team} key={item.team}>{item.team}</NavDropdown.Item>
+                        ))
+                        :<div>no teams compiled</div>
+                    }
                 </NavDropdown>
-                <Nav.Link href="/rankings">Rankings</Nav.Link>
-                <Nav.Link href="/ratings">Ratings</Nav.Link>
-                <Nav.Link href="/compile">Compile</Nav.Link>
+                <Nav.Link as={Link} to="/rankings">Rankings</Nav.Link>
+                <Nav.Link as={Link} to="/ratings">Ratings</Nav.Link>
+                <Nav.Link as={Link} to="/compile">Compile</Nav.Link>
             </Nav>
             <Nav>    
                 <Nav.Link href="/about">About</Nav.Link>

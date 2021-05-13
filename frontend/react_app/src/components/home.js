@@ -110,12 +110,12 @@ class Home extends Component {
     return (
       <div className="container">
         <h1>All Players</h1>
-        {this.props.players.ratings.all ?
+        {this.props.players ?
             <BootstrapTable 
             striped
             hover
             keyField='id' 
-            data={ this.props.players.ratings.all } 
+            data={ this.props.players } 
             columns={ this.state.columns }
             pagination={ paginationFactory() }
             />
@@ -127,9 +127,8 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log(state);
   return {
-    players: state.comp
+    players: state.comp.ratings.all
   };
 };
 
