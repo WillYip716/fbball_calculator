@@ -47,7 +47,8 @@ def compile(request):
     data = {
         "ratings": ratings,
         "avr": avrF.to_dict("records"),
-        "rankings": rankings
+        "rankings": rankings,
+        "teams":data
     }
 
     dump = json.dumps(data)

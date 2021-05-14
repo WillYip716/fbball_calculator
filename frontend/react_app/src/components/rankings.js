@@ -143,7 +143,7 @@ class Rankings extends Component {
                 <BootstrapTable 
                 striped
                 hover
-                keyField='id' 
+                keyField='team' 
                 data={ this.props.avg } 
                 columns={ this.state.columns }/>
                 :<h3>nothing yet</h3>
@@ -155,7 +155,7 @@ class Rankings extends Component {
                 <BootstrapTable 
                 striped
                 hover
-                keyField='id' 
+                keyField='team' 
                 data={ this.props.tot } 
                 columns={ this.state.columns }/>
                 :<h3>nothing yet</h3>
@@ -167,7 +167,7 @@ class Rankings extends Component {
                 <BootstrapTable 
                 striped
                 hover
-                keyField='id' 
+                keyField='team' 
                 data={ this.props.avgrank } 
                 columns={ this.state.rankcolumns }/>
                 :<h3>nothing yet</h3>
@@ -179,7 +179,7 @@ class Rankings extends Component {
                 <BootstrapTable 
                 striped
                 hover
-                keyField='id' 
+                keyField='team' 
                 data={ this.props.totrank } 
                 columns={ this.state.rankcolumns }/>
                 :<h3>nothing yet</h3>

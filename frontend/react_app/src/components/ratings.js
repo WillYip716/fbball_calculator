@@ -177,6 +177,10 @@ class Ratings extends Component {
         forwards: this.props.fratings? this.props.fratings: [],
         centers: this.props.cratings? this.props.cratings: [],
         all: this.props.aratings? this.props.aratings: [],
+        oguards: this.props.gratings? this.props.gratings: [],
+        oforwards: this.props.fratings? this.props.fratings: [],
+        ocenters: this.props.cratings? this.props.cratings: [],
+        oall: this.props.aratings? this.props.aratings: [],
     })
   }
 
@@ -200,27 +204,58 @@ class Ratings extends Component {
   }
 
 
+  filTotal = (o) => {    
+    let total = 0;
+    let filtot = 0;
+    let u = ["PTSrt","FG_PCTrt","FG3Mrt","FT_PCTrt","REBrt","ASTrt","STLrt","BLKrt","TOVrt"];
+    for(let j=0;j<u.length;j++){
+      total += o[u[j]];
+    }
+    if(this.state.sfil.length){
+      const keys = this.state.sfil;
+      for(let i=0;i<keys.length;i++){
+        filtot += o[keys[i]];
+      }
+    }
+    return Math.round((total - filtot)* 100)/100;
+  }
 
 
   filterInfo(event){
       event.preventDefault();
       //let u = ["PTSrt","FG_PCTrt","FG3Mrt","FT_PCTrt","REBrt","ASTrt","STLrt","BLKrt","TOVrt"];
-      let u = this.state.sfil;
-      console.log(u);
+      if(this.state)
       if(this.state.sfil.length){
-         let tempc = [...this.state.columnsbase];
-         for(let i = 0; i<u.length;i++){
-            let objIndex = tempc.findIndex((obj => obj.dataField === u[i]));
-            console.log(objIndex);
-            if(objIndex>-1){
-                tempc[objIndex].hidden = true;
-            }
-         }
-         console.log(tempc);
-         this.setState({
-            columns: tempc,
-         })
-         console.log(this.state.columns);
+        const updatedg = this.props.gratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
+        const updatedf = this.props.fratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
+        const updatedc = this.props.cratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
+        const updateda = this.props.aratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
+
+        const newColumn = this.state.columnsbase.filter(element => this.state.sfil.indexOf(element.dataField) === -1);
+
+        this.setState({
+          columns:newColumn,
+          guards: updatedg,
+          forwards: updatedf,
+          centers: updatedc,
+          all: updateda,
+        });
+         //console.log(tempc);
+         
+         console.log(this.state.guards);
+      }
+      else{
+        const updatedg = this.props.gratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
+        const updatedf = this.props.fratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
+        const updatedc = this.props.cratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
+        const updateda = this.props.aratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
+        this.setState({
+          columns:this.state.columnsbase,
+          guards: updatedg,
+          forwards: updatedf,
+          centers: updatedc,
+          all: updateda,
+        });
       }
       /*if(this.state.av === "all"){
         u.push("avail=" + this.state.av);   
@@ -252,9 +287,9 @@ class Ratings extends Component {
           <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="BLKrt">BLK</ToggleButton>
           <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="TOVrt">TOV</ToggleButton>
         </ToggleButtonGroup>
-        <ToggleButtonGroup type="radio" name="availoptions" onChange={this.avtog.bind(this)} defaultValue="available">
-          <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="available">Available</ToggleButton>
+        <ToggleButtonGroup type="radio" name="availoptions" onChange={this.avtog.bind(this)} defaultValue="all">
           <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="all">All</ToggleButton>
+          <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="available">Available</ToggleButton>
         </ToggleButtonGroup>
         <Form onSubmit={this.filterInfo.bind(this)} role="form">
           <Button type="submit">Filter</Button>

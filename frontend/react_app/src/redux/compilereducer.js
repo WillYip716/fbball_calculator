@@ -15,6 +15,7 @@ const reducer = (state = initialState, action) => {
                 ratings: action.payload.ratings,
                 avr: action.payload.avr,
                 rankings: action.payload.rankings,
+                teams: action.payload.teams,
             }
         case GET_ERRORS:
             console.log("errored");
