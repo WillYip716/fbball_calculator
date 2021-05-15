@@ -14,7 +14,7 @@ class Ratings extends Component {
     forwards: [],
     centers: [],
     all: [],
-    av: "available",
+    av: "all",
     sfil:[],
     pos: "all",
     columns: [
@@ -177,10 +177,6 @@ class Ratings extends Component {
         forwards: this.props.fratings? this.props.fratings: [],
         centers: this.props.cratings? this.props.cratings: [],
         all: this.props.aratings? this.props.aratings: [],
-        oguards: this.props.gratings? this.props.gratings: [],
-        oforwards: this.props.fratings? this.props.fratings: [],
-        ocenters: this.props.cratings? this.props.cratings: [],
-        oall: this.props.aratings? this.props.aratings: [],
     })
   }
 
@@ -224,42 +220,36 @@ class Ratings extends Component {
   filterInfo(event){
       event.preventDefault();
       //let u = ["PTSrt","FG_PCTrt","FG3Mrt","FT_PCTrt","REBrt","ASTrt","STLrt","BLKrt","TOVrt"];
-      if(this.state)
-      if(this.state.sfil.length){
-        const updatedg = this.props.gratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
-        const updatedf = this.props.fratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
-        const updatedc = this.props.cratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
-        const updateda = this.props.aratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
+      const newColumn = this.state.columnsbase.filter(element => this.state.sfil.indexOf(element.dataField) === -1);
+      if(this.state.av === "available"){
+          const rostered = this.props.teams.reduce((a, c) => a.concat(c["players"]),[])
+          
+          const updatedg = this.props.gratings.filter(item => !rostered.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
+          const updatedf = this.props.fratings.filter(item => !rostered.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
+          const updatedc = this.props.cratings.filter(item => !rostered.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
+          const updateda = this.props.aratings.filter(item => !rostered.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
+          
+          this.setState({
+              columns:newColumn,
+              guards: updatedg,
+              forwards: updatedf,
+              centers: updatedc,
+              all: updateda,
+          });
+      }else{
+          const updatedg = this.props.gratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
+          const updatedf = this.props.fratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
+          const updatedc = this.props.cratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
+          const updateda = this.props.aratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
 
-        const newColumn = this.state.columnsbase.filter(element => this.state.sfil.indexOf(element.dataField) === -1);
-
-        this.setState({
-          columns:newColumn,
-          guards: updatedg,
-          forwards: updatedf,
-          centers: updatedc,
-          all: updateda,
-        });
-         //console.log(tempc);
-         
-         console.log(this.state.guards);
+          this.setState({
+            columns:newColumn,
+            guards: updatedg,
+            forwards: updatedf,
+            centers: updatedc,
+            all: updateda,
+          });
       }
-      else{
-        const updatedg = this.props.gratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
-        const updatedf = this.props.fratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
-        const updatedc = this.props.cratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
-        const updateda = this.props.aratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
-        this.setState({
-          columns:this.state.columnsbase,
-          guards: updatedg,
-          forwards: updatedf,
-          centers: updatedc,
-          all: updateda,
-        });
-      }
-      /*if(this.state.av === "all"){
-        u.push("avail=" + this.state.av);   
-      }*/
 
   }
   
@@ -357,6 +347,7 @@ const mapStateToProps = state => {
     fratings: state.comp.ratings.forwards,
     cratings: state.comp.ratings.centers,
     aratings: state.comp.ratings.all,
+    teams: state.comp.teams,
   };
 };
 

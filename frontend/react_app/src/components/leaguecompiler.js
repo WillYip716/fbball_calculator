@@ -21,8 +21,8 @@ function LeagueCompiler(){
         event.preventDefault(); 
         let arr = [];
         let outarr = [];
-        let reTeam =  new RegExp("([a-zA-Z .'0-9]*)(?=\\nPos)","g");
-        let rePlayers = new RegExp("(?<=\\n)([a-zA-Z .']*)(?=[ ](Atl|Bkn|Bos|Cha|Chi|Cle|Dal|Den|Det|GS|Hou|Ind|LAC|LAL|Mem|Mia|Mil|Min|NO|NY|OKC|Orl|Phi|Pho|Por|SA|Sac|Tor|Uta|Was))","g");
+        let reTeam =  new RegExp("([a-zA-Z .'0-9-]*)(?=\\nPos)","g");
+        let rePlayers = new RegExp("(?<=\\n)([a-zA-Z .'-]*)(?=[ ](Atl|Bkn|Bos|Cha|Chi|Cle|Dal|Den|Det|GS|Hou|Ind|LAC|LAL|Mem|Mia|Mil|Min|NO|NY|OKC|Orl|Phi|Pho|Por|SA|Sac|Tor|Uta|Was))","g");
         arr = textarea.split("\n\n");
         arr = arr.filter((i) => (i.indexOf("Pos")>-1));
         for(let i = 0; i < arr.length; i++){
