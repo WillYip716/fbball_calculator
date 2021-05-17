@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 
 function NavbarComp(){
 
-    const teams = useSelector(state => state.comp.rankings.avg)
+    const teams = useSelector(state => state.comp.teams)
     
     return(
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
@@ -15,8 +15,8 @@ function NavbarComp(){
                 <NavDropdown title="Rosters" id="collasible-nav-dropdown">
                     <NavDropdown.Item as={Link} to="/rosters">All</NavDropdown.Item>
                     {teams ?
-                        teams.map(item => (
-                            <NavDropdown.Item as={Link} to={"/team/" + item.team} key={item.team}>{item.team}</NavDropdown.Item>
+                        teams.map((item,index) => (
+                            <NavDropdown.Item as={Link} to={"/team/" + index} key={item.teamName}>{item.teamName}</NavDropdown.Item>
                         ))
                         :<div>no teams compiled</div>
                     }

@@ -3,7 +3,8 @@ import { COMPILE, GET_ERRORS} from './types';
 const initialState = {
     ratings: [],
     rankings: [],
-    avr: []
+    avr: [],
+    teams:[]
 };
 
 

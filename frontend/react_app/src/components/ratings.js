@@ -172,11 +172,15 @@ class Ratings extends Component {
   }
 
   componentDidMount() {
+    const updatedg = this.props.gratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
+    const updatedf = this.props.fratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
+    const updatedc = this.props.cratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
+    const updateda = this.props.aratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
     this.setState({
-        guards: this.props.gratings? this.props.gratings: [],
-        forwards: this.props.fratings? this.props.fratings: [],
-        centers: this.props.cratings? this.props.cratings: [],
-        all: this.props.aratings? this.props.aratings: [],
+        guards: updatedg,
+        forwards: updatedf,
+        centers: updatedc,
+        all: updateda,
     })
   }
 
