@@ -13,12 +13,12 @@ class Team extends Component {
     state = {
       teamName:"",  
       rosteredplayers:[],
-      rosteredratings:[],
       guards: [],
       forwards: [],
       centers: [],
       all:[],
       pos:"avg",
+      sfil:[],
       columns: [
         {
           dataField: 'Player_Name',
@@ -33,11 +33,6 @@ class Team extends Component {
         {
           dataField: 'GP',
           text: 'GP',
-          sort: true
-        },
-        {
-          dataField: 'TotalRating',
-          text: 'Rating',
           sort: true
         },
         {
@@ -304,7 +299,17 @@ class Team extends Component {
           this.setState({
               teamName: name,
               rosteredplayers: roster,
+              ratingscolumn: this.state.ratingscolumnsbase
           })
+          if(this.state.pos === "ratings"){
+            const newColumn = this.state.ratingscolumnsbase.filter(element => this.state.sfil.indexOf(element.dataField) === -1);
+            const updatedroster = this.props.aratings.filter(item => players.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
+            
+            this.setState({
+                ratingscolumns:newColumn,
+                rosteredplayers: updatedroster,
+            });
+          }
         }
         else{
           this.setState({
@@ -312,6 +317,41 @@ class Team extends Component {
           })
         } 
       }
+    }
+
+    filTotal = (o) => {    
+      let total = 0;
+      let filtot = 0;
+      let u = ["PTSrt","FG_PCTrt","FG3Mrt","FT_PCTrt","REBrt","ASTrt","STLrt","BLKrt","TOVrt"];
+      for(let j=0;j<u.length;j++){
+        total += o[u[j]];
+      }
+      if(this.state.sfil.length){
+        const keys = this.state.sfil;
+        for(let i=0;i<keys.length;i++){
+          filtot += o[keys[i]];
+        }
+      }
+      return Math.round((total - filtot)* 100)/100;
+    }
+
+    filterInfo(event){
+      event.preventDefault();
+      //let u = ["PTSrt","FG_PCTrt","FG3Mrt","FT_PCTrt","REBrt","ASTrt","STLrt","BLKrt","TOVrt"];
+      const newColumn = this.state.ratingscolumnsbase.filter(element => this.state.sfil.indexOf(element.dataField) === -1);
+          
+      const updatedroster = this.state.rosteredplayers.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
+      
+      this.setState({
+          ratingscolumns:newColumn,
+          rosteredplayers: updatedroster,
+      });
+    }
+
+    statstog(val) {
+      this.setState({
+          sfil: val,
+      })
     }
 
     ptog(val) {
@@ -325,10 +365,27 @@ class Team extends Component {
         <div className="container">
           <h2>{this.state.teamName}</h2>
 
-          <ToggleButtonGroup type="radio" name="options" defaultValue="all" onChange={this.ptog.bind(this)}>
+          <ToggleButtonGroup type="radio" name="options" defaultValue="avg" onChange={this.ptog.bind(this)}>
             <ToggleButton value="avg" style={{padding: "5px",border: "black 1px solid"}}>Averages</ToggleButton>
             <ToggleButton value="ratings" style={{padding: "5px", border: "black 1px solid"}}>Ratings</ToggleButton>
           </ToggleButtonGroup>
+          <br/>
+            <div className={this.state.pos !== "ratings" ? 'hidden' : ''}>
+              <ToggleButtonGroup type="checkbox" onChange={this.statstog.bind(this)} >
+                <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="PTSrt">PTS</ToggleButton>
+                <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="FG_PCTrt">FG%</ToggleButton>
+                <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="FG3Mrt">3PTM</ToggleButton>
+                <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="FT_PCTrt">FT%</ToggleButton>
+                <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="REBrt">REB</ToggleButton>
+                <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="ASTrt">AST</ToggleButton>
+                <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="STLrt">STL</ToggleButton>
+                <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="BLKrt">BLK</ToggleButton>
+                <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="TOVrt">TOV</ToggleButton>
+              </ToggleButtonGroup>
+              <Form onSubmit={this.filterInfo.bind(this)} role="form">
+                <Button type="submit">Filter</Button>
+              </Form>
+            </div>
           <br/>
           <div className={this.state.pos !== "avg" ? 'hidden' : ''}>
             <h3>Averages</h3>
