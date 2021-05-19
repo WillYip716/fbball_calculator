@@ -6,7 +6,19 @@
     margin: 1rem;
     border: 1px solid rgba(0,0,0,.25);
     vertical-align: top;
-  }
+}
+
+footer{
+    background-color: #343a40 !important;
+    text-align: center;
+    color: white;
+    padding-top: 1rem!important;
+    padding-bottom: 1rem!important;
+    position: fixed;
+    bottom:0;
+    width: 100%;
+    z-index: 100;
+}
 
 .container{
     margin-top: 50px;
@@ -32,4 +44,15 @@
 
 .btn-group{
     margin-bottom: 20px;
+}
+
+.main{
+    padding-bottom: 8rem;
+}
+
+.info{
+    font-size: 24px;
+    border-color: white !important;
+    color: gray !important;
+    background-color: white !important;
 }

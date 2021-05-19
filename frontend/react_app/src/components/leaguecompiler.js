@@ -4,7 +4,8 @@ import { Form,Button } from "react-bootstrap";
 import { compile } from "../redux/actions";
 import { useDispatch } from "react-redux";
 import { useHistory } from 'react-router-dom';
-
+import Popover from 'react-bootstrap/Popover'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 
 function LeagueCompiler(){
 
@@ -41,13 +42,30 @@ function LeagueCompiler(){
         //console.log(outarr)
     }
 
+    const popover = (
+        <Popover id="popover-basic">
+          <Popover.Title as="h3">Compile Yahoo League</Popover.Title>
+          <Popover.Content>
+            Head over to the rosters page under the "league" drop down in your league. Simply copy all the content (ctrl + a => ctrl + c) and paste into the box below
+          </Popover.Content>
+        </Popover>
+    );
+
     
     
 
     return (
       <div className="container">
+        <div style={{display:"flex"}}>
+            <h3 style={{display:"inline-block",marginRight:"auto"}}>Compile League</h3>
+            <OverlayTrigger trigger="click" placement="left" overlay={popover}>
+                <Button className="info">&#9432;</Button>
+            </OverlayTrigger>
+        </div>
+        
+
           <Form onSubmit={handleSubmit} style={{textAlign:"center", margin:"auto"}}role="form">
-              <textarea style={{width: "80%",margin:"auto", height: "500px"}} value={textarea} onChange={handleChange} />
+              <textarea style={{width: "100%",margin:"auto", height: "500px"}} value={textarea} onChange={handleChange} />
               <br/>
               <Button type="submit">Compile</Button>
           </Form>

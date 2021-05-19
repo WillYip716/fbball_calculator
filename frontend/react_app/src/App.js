@@ -9,19 +9,23 @@ import Ratings from './components/ratings';
 import LeagueCompiler from './components/leaguecompiler';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Rankings from './components/rankings';
+import Footer from './components/footer';
 
 
 function App() {
   return (
     <div className="App">
       <NavbarComp/>
-        <Route path="/" exact component={Home} />
-        <Route path="/rankings" exact component={Rankings} />
-        <Route path="/rosters" exact component={Roster} />
-        <Route path="/team/:id" exact component={Team} />
-        <Route path="/about" exact component={About} />
-        <Route path="/ratings" exact component={Ratings} />
-        <Route path="/compile" exact component={LeagueCompiler} />
+        <div className="main">
+          <Route path="/" exact component={Home} />
+          <Route path="/rankings" exact component={Rankings} />
+          <Route path="/rosters" exact component={Roster} />
+          <Route path="/team/:id" exact component={Team} />
+          <Route path="/about" exact component={About} />
+          <Route path="/ratings" exact component={Ratings} />
+          <Route path="/compile" exact component={LeagueCompiler} />
+        </div>
+      <Footer/>
     </div>
   );
 }
