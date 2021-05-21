@@ -56,7 +56,7 @@ function LeagueCompiler(){
 
     return (
       <div className="container">
-        <div style={{display:"flex"}}>
+        <div style={{display:"flex",marginBottom:"1rem"}}>
             <h3 style={{display:"inline-block",marginRight:"auto"}}>Compile League</h3>
             <OverlayTrigger trigger="click" placement="left" overlay={popover}>
                 <Button className="info">&#9432;</Button>

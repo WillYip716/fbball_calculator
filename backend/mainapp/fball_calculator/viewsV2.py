@@ -120,15 +120,21 @@ def rankingsHelper(d):
 
         sum_column = p_df.sum(axis=0)
 
+        
+
 
         avgdata = {
             'team': tname,
+            'FGM':"{:.2f}".format(sum_column.FGM),
+            'FGA':"{:.2f}".format(sum_column.FGA),
             'FG_PCT': "{:.2f}".format(sum_column.FGM / sum_column.FGA),
             'FG3M':  "{:.2f}".format(sum_column.FG3M),
+            'FTM': "{:.2f}".format(sum_column.FTM),
+            'FTA': "{:.2f}".format(sum_column.FTA),
             'FT_PCT': "{:.2f}".format(sum_column.FTM / sum_column.FTA),
             'REB': "{:.2f}".format(sum_column.REB),
             'AST': "{:.2f}".format(sum_column.AST),
-            'STL': "{:.2f}".format(sum_column.STL),
+            'STL': round(sum_column.STL, 2),
             'BLK': round(sum_column.BLK, 2), #"{:.2f}".format(sum_column.BLK),
             'TOV': "{:.2f}".format(sum_column.TOV),
             'PTS': "{:.2f}".format(sum_column.PTS),
@@ -148,7 +154,7 @@ def rankingsHelper(d):
             'FT_PCT': "{:.2f}".format(sum_column.FTM / sum_column.FTA),
             'REB': "{:.2f}".format(sum_column.REB),
             'AST': "{:.2f}".format(sum_column.AST),
-            'STL': "{:.2f}".format(sum_column.STL),
+            'STL': round(sum_column.STL, 2),
             'BLK': round(sum_column.BLK, 2),#"{:.2f}".format(sum_column.BLK),
             'TOV': "{:.2f}".format(sum_column.TOV),
             'PTS': "{:.2f}".format(sum_column.PTS),
@@ -158,6 +164,24 @@ def rankingsHelper(d):
     rankavg = pd.DataFrame(avgroster)
     ranktot = pd.DataFrame(totalroster)
     traverser2 = ["FG_PCT","FG3M","FT_PCT","REB","AST","STL","BLK","TOV","PTS"]
+
+    stdrank = rankavg[["FGM","FGA","FG_PCT","FG3M","FTM","FTA","FT_PCT","REB","AST","STL","BLK","TOV","PTS"]]
+    stdrankdev = {
+        'FGM':"{:.2f}".format((float(stdrank["FGM"].max()) - float(stdrank["FGM"].min()))/12),
+        'FGA':"{:.2f}".format((float(stdrank["FGA"].max()) - float(stdrank["FGA"].min()))/12),
+        'FG_PCT': "{:.2f}".format((float(stdrank["FG_PCT"].max()) - float(stdrank["FG_PCT"].min()))/12),
+        'FG3M':  "{:.2f}".format((float(stdrank["FG3M"].max()) - float(stdrank["FG3M"].min()))/12),
+        'FTM': "{:.2f}".format((float(stdrank["FTM"].max()) - float(stdrank["FTM"].min()))/12),
+        'FTA': "{:.2f}".format((float(stdrank["FTA"].max()) - float(stdrank["FTA"].min()))/12),
+        'FT_PCT': "{:.2f}".format((float(stdrank["FT_PCT"].max()) - float(stdrank["FT_PCT"].min()))/12),
+        'REB': "{:.2f}".format((float(stdrank["REB"].max()) - float(stdrank["REB"].min()))/12),
+        'AST': "{:.2f}".format((float(stdrank["AST"].max()) - float(stdrank["AST"].min()))/12),
+        'STL': "{:.2f}".format((float(stdrank["STL"].max()) - float(stdrank["STL"].min()))/12),
+        'BLK': "{:.2f}".format((float(stdrank["BLK"].max()) - float(stdrank["BLK"].min()))/12),
+        'TOV': "{:.2f}".format((float(stdrank["TOV"].max()) - float(stdrank["TOV"].min()))/12),
+        'PTS': "{:.2f}".format((float(stdrank["PTS"].max()) - float(stdrank["PTS"].min()))/12),
+    }
+
     
     for j in traverser2:
         if j == "TOV":
@@ -176,6 +200,7 @@ def rankingsHelper(d):
         "tot": totalroster,
         "rankavg": rankavg.to_dict('records'),
         "ranktot": ranktot.to_dict('records'),
+        "rkstd": stdrankdev,
     }
 
 

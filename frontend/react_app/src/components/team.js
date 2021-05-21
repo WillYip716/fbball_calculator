@@ -17,6 +17,7 @@ class Team extends Component {
       forwards: [],
       centers: [],
       all:[],
+      focus:[],
       pos:"avg",
       sfil:[],
       columns: [
@@ -275,7 +276,9 @@ class Team extends Component {
       if(this.props.teams && (parseInt(this.props.match.params.id) < this.props.teams.length)){
         const name = this.props.teams[parseInt(this.props.match.params.id)].teamName;
         const players = this.props.teams[parseInt(this.props.match.params.id)].players;
-        const roster = this.props.aratings.filter(item => players.includes(item.Player_Name))
+        const roster = this.props.aratings.filter(item => players.includes(item.Player_Name));
+        const f = this.pickHighest(this.props.avgrank.filter(item=>item.team===name)[0]);
+        console.log(f);
         this.setState({
             teamName: name,
             rosteredplayers: roster,
@@ -295,7 +298,9 @@ class Team extends Component {
         if(this.props.teams && (parseInt(this.props.match.params.id) < this.props.teams.length)){
           const name = this.props.teams[parseInt(this.props.match.params.id)].teamName;
           const players = this.props.teams[parseInt(this.props.match.params.id)].players;
-          const roster = this.props.aratings.filter(item => players.includes(item.Player_Name))
+          const roster = this.props.aratings.filter(item => players.includes(item.Player_Name));
+          const f = this.pickHighest(this.props.avgrank.filter(item=>item.team===name)[0]);
+          console.log(f);
           this.setState({
               teamName: name,
               rosteredplayers: roster,
@@ -346,6 +351,32 @@ class Team extends Component {
           ratingscolumns:newColumn,
           rosteredplayers: updatedroster,
       });
+    }
+
+    pickHighest = (obj) => {
+      console.log(obj);
+      const ranks = {
+        ...obj
+      };
+      delete ranks["FTM"];
+      delete ranks["FTA"];
+      delete ranks["FGM"];
+      delete ranks["FGA"];
+      delete ranks["rottotal"];
+      delete ranks["team"];
+      
+      const requiredObj = [];
+      let num = 5;
+      if(num > Object.keys(ranks).length){
+         return false;
+      };
+      Object.keys(ranks).sort((a, b) => ranks[a] - ranks[b]).forEach((key, ind) =>
+      {
+         if(ind < num){
+            requiredObj.push(key);
+         }
+      });
+      return requiredObj;
     }
 
     statstog(val) {
@@ -429,6 +460,7 @@ class Team extends Component {
       tot: state.comp.rankings.tot,
       avgrank: state.comp.rankings.rankavg,
       totrank: state.comp.rankings.ranktot,
+      rkstd: state.comp.rankings.rkstd,
     };
   };
   

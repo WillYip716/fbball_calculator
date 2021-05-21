@@ -56,3 +56,8 @@ footer{
     color: gray !important;
     background-color: white !important;
 }
+
+.dropdown-item{
+    background-color: #343a40 !important;
+    color:white;
+}
