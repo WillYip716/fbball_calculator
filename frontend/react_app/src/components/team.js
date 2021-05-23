@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
-import { Form,Button } from "react-bootstrap";
+import { Form,Button, Table } from "react-bootstrap";
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
@@ -278,10 +278,10 @@ class Team extends Component {
         const players = this.props.teams[parseInt(this.props.match.params.id)].players;
         const roster = this.props.aratings.filter(item => players.includes(item.Player_Name));
         const f = this.pickHighest(this.props.avgrank.filter(item=>item.team===name)[0]);
-        console.log(f);
         this.setState({
             teamName: name,
             rosteredplayers: roster,
+            focus:f,
         })
       }
       else{
@@ -300,11 +300,11 @@ class Team extends Component {
           const players = this.props.teams[parseInt(this.props.match.params.id)].players;
           const roster = this.props.aratings.filter(item => players.includes(item.Player_Name));
           const f = this.pickHighest(this.props.avgrank.filter(item=>item.team===name)[0]);
-          console.log(f);
           this.setState({
               teamName: name,
               rosteredplayers: roster,
-              ratingscolumn: this.state.ratingscolumnsbase
+              ratingscolumn: this.state.ratingscolumnsbase,
+              focus: f,
           })
           if(this.state.pos === "ratings"){
             const newColumn = this.state.ratingscolumnsbase.filter(element => this.state.sfil.indexOf(element.dataField) === -1);
@@ -354,7 +354,6 @@ class Team extends Component {
     }
 
     pickHighest = (obj) => {
-      console.log(obj);
       const ranks = {
         ...obj
       };
@@ -373,6 +372,17 @@ class Team extends Component {
       Object.keys(ranks).sort((a, b) => ranks[a] - ranks[b]).forEach((key, ind) =>
       {
          if(ind < num){
+           if(key === "FG_PCT"){
+              requiredObj.push("FG%");
+           }
+           else if(key === "FT_PCT"){
+              requiredObj.push("FT%");
+           }
+           else{
+              requiredObj.push(key);
+           }
+         }
+         else if(ranks[key] <= 6 ){
             requiredObj.push(key);
          }
       });
@@ -418,6 +428,18 @@ class Team extends Component {
               </Form>
             </div>
           <br/>
+          <Table>
+            <thead>
+              <tr>
+                <th>Suggested Stats to Focus on</th>
+                {this.state.focus.map((item,index) => (
+                  <th key={item}>{item}</th>
+                ))}
+              </tr>
+            </thead>
+          </Table>
+
+
           <div className={this.state.pos !== "avg" ? 'hidden' : ''}>
             <h3>Averages</h3>
             {this.state.rosteredplayers ?

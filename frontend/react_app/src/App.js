@@ -10,6 +10,7 @@ import LeagueCompiler from './components/leaguecompiler';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Rankings from './components/rankings';
 import Footer from './components/footer';
+import Trade from './components/trade'
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/about" exact component={About} />
           <Route path="/ratings" exact component={Ratings} />
           <Route path="/compile" exact component={LeagueCompiler} />
+          <Route path="/trade" exact component={Trade} />
         </div>
       <Footer/>
     </div>

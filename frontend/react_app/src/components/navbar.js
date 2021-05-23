@@ -21,6 +21,7 @@ function NavbarComp(){
                         :<div>no teams compiled</div>
                     }
                 </NavDropdown>
+                <Nav.Link as={Link} to="/trade">Trade</Nav.Link>
                 <Nav.Link as={Link} to="/rankings">Rankings</Nav.Link>
                 <Nav.Link as={Link} to="/ratings">Ratings</Nav.Link>
                 <Nav.Link as={Link} to="/compile">Compile</Nav.Link>
