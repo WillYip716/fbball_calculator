@@ -61,3 +61,8 @@ footer{
     background-color: #343a40 !important;
     color:white;
 }
+
+.tradeform{
+    display: inline-block;
+    width: 50%;
+}

@@ -9,6 +9,7 @@ class Trade extends Component {
     choicea:[],
     ateam:"",
     abox:"",
+    bbox:"",
     listb:[],
     choiceb:[],
     columns: [
@@ -117,16 +118,33 @@ class Trade extends Component {
     const filterlist = team[0]["players"].filter(item => !added.includes(item));
     const updatedlist = this.props.aratings.filter(item => filterlist.includes(item.Player_Name)).sort((a,b) => (a.Player_Name < b.Player_Name) ? -1 : ((b.Player_Name < a.Player_Name) ? 1 : 0));
 
-    const choiceb = this.props.aratings.filter(item => !team[0]["players"].includes(item.Player_Name)).sort((a,b) => (a.Player_Name < b.Player_Name) ? -1 : ((b.Player_Name < a.Player_Name) ? 1 : 0));
-
-    console.log(choiceb);
-
     this.setState({
       choicea:added,
       lista:updatedlist,
       ateam: team,
       abox:"",
-      listb:choiceb,
+    })
+
+    if(!this.state.listb.length){
+      const addedb = this.state.choiceb.concat(team[0]["players"]);
+      const updatedlistb = this.props.aratings.filter(item => !addedb.includes(item.Player_Name)).sort((a,b) => (a.Player_Name < b.Player_Name) ? -1 : ((b.Player_Name < a.Player_Name) ? 1 : 0));
+      this.setState({
+        listb:updatedlistb,
+      })
+    }
+    
+  }
+
+  addlistb(event){
+    event.preventDefault();
+    const added = this.state.choiceb.concat(this.state.bbox);
+    const updatedlist = this.state.listb.filter(item => !added.includes(item.Player_Name)).sort((a,b) => (a.Player_Name < b.Player_Name) ? -1 : ((b.Player_Name < a.Player_Name) ? 1 : 0));
+
+
+    this.setState({
+      choiceb:added,
+      listb:updatedlist,
+      bbox:"",
     })
   }
 
@@ -136,31 +154,100 @@ class Trade extends Component {
     })
   }
 
-  changelistb(){
-
+  changelistb(event){
+    this.setState({
+      bbox: event.target.value,
+    })
   }
   
+  tradeClick(){
+    console.log("clicked");
+    //["PTS","FG_PCT","FG3M","FT_PCT","REB","AST","STL","BLK","TOV"]
+    const tradeaway = this.props.aratings.filter(item => this.state.choicea.includes(item.Player_Name)).reduce(function(p, c) {
+      return {
+        PTS:  p.PTS + c.PTS,
+        FGM:  p.FGM + c.FGM,
+        FGA:  p.FGA + c.FGA,
+        FG3M: p.FG3M + c.FG3M,
+        FTM:  p.FTM + c.FTM,
+        FTA:  p.FTA + c.FTA,
+        REB:  p.REB + c.REB,
+        AST:  p.AST + c.AST,
+        STL:  p.STL + c.STL,
+        BLK:  p.BLK + c.BLK,
+        TOV:  p.TOV + c.TOV,
+      }},{PTS:0,FGM:0,FGA:0,FG3M:0,FTM:0,FTA:0,REB:0,AST:0,STL:0,BLK:0,TOV:0});
+
+
+    const tradefor = this.props.aratings.filter(item => this.state.choiceb.includes(item.Player_Name)).reduce(function(p, c) {
+      return {
+        PTS:  p.PTS + c.PTS,
+        FGM:  p.FGM + c.FGM,
+        FGA:  p.FGA + c.FGA,
+        FG3M: p.FG3M + c.FG3M,
+        FTM:  p.FTM + c.FTM,
+        FTA:  p.FTA + c.FTA,
+        REB:  p.REB + c.REB,
+        AST:  p.AST + c.AST,
+        STL:  p.STL + c.STL,
+        BLK:  p.BLK + c.BLK,
+        TOV:  p.TOV + c.TOV,
+      }},{PTS:0,FGM:0,FGA:0,FG3M:0,FTM:0,FTA:0,REB:0,AST:0,STL:0,BLK:0,TOV:0});
+    
+    console.log(tradeaway);
+    console.log(tradefor);
+  }
+
   render() {
     return (
       <div className="container">
-        <h1>Trade</h1>
-        <h5>Players to trade away</h5>
-        <h6 style={{color:"red"}}>{[...this.state.choicea].join(",")}</h6>
-        <Form onSubmit={this.addlista.bind(this)} role="form">
-            <Form.Group controlId="exampleForm.SelectCustom">
-              <Form.Label>Select a player </Form.Label>
-              <Form.Control as="select" custom onChange={this.changelista.bind(this)}>
-                <option key='blankChoice' hidden value="" />
-                {this.state.lista ?
-                    this.state.lista.map(players => (
-                        <option key={players.Player_Name} value={players.Player_Name}>{players.Player_Name}</option>
-                    ))
-                    :<h3>no valid players loaded</h3>
-                }
-              </Form.Control>
-            </Form.Group>
-            <Button type="submit">Add Player</Button>
-        </Form>
+        <div style={{display:"flex",marginBottom:"2rem"}}>
+        {this.state.choicea.length && this.state.choiceb.length?
+          <button className="btn btn-primary" style={{margin:"auto",fontSize:"2rem"}} onClick={() => this.tradeClick()}>Trade</button>
+          :<h1 style={{margin:"auto"}}>Trade</h1>
+        }
+        </div>
+        
+        
+        
+        
+        
+        <div className="tradeform">
+            <h6 style={{color:"red"}}>{[...this.state.choicea].join(",")}</h6>
+            <Form onSubmit={this.addlista.bind(this)} role="form">
+                <Form.Group controlId="exampleForm.SelectCustom">
+                  <Form.Label>Step 1: Select a rostered player</Form.Label>
+                  <Form.Control as="select" custom onChange={this.changelista.bind(this)}>
+                    <option key='blankChoice' hidden value="" />
+                    {this.state.lista ?
+                        this.state.lista.map(players => (
+                            <option key={players.Player_Name} value={players.Player_Name}>{players.Player_Name}</option>
+                        ))
+                        :<h3>no valid players loaded</h3>
+                    }
+                  </Form.Control>
+                </Form.Group>
+                <Button type="submit">Add Player</Button>
+            </Form>
+        </div>
+        <div className="tradeform">
+            <h6 style={{color:"green"}}>{[...this.state.choiceb].join(",")}</h6>
+            <Form onSubmit={this.addlistb.bind(this)} role="form">
+                <Form.Group controlId="exampleForm.SelectCustom">
+                  <Form.Label>Step 2: Select a player to trade for</Form.Label>
+                  <Form.Control as="select" custom onChange={this.changelistb.bind(this)}>
+                    <option key='blankChoice' hidden value="" />
+                    {this.state.listb ?
+                        this.state.listb.map(players => (
+                            <option key={players.Player_Name} value={players.Player_Name}>{players.Player_Name}</option>
+                        ))
+                        :<h3>no valid players loaded</h3>
+                    }
+                  </Form.Control>
+                </Form.Group>
+                <Button type="submit">Add Player</Button>
+            </Form>
+        </div>    
       </div>
     );
   }
