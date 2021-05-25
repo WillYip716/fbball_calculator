@@ -121,7 +121,7 @@ class Trade extends Component {
     this.setState({
       choicea:added,
       lista:updatedlist,
-      ateam: team,
+      ateam: team[0]["teamName"],
       abox:"",
     })
 
@@ -165,37 +165,65 @@ class Trade extends Component {
     //["PTS","FG_PCT","FG3M","FT_PCT","REB","AST","STL","BLK","TOV"]
     const tradeaway = this.props.aratings.filter(item => this.state.choicea.includes(item.Player_Name)).reduce(function(p, c) {
       return {
-        PTS:  p.PTS + c.PTS,
-        FGM:  p.FGM + c.FGM,
-        FGA:  p.FGA + c.FGA,
-        FG3M: p.FG3M + c.FG3M,
-        FTM:  p.FTM + c.FTM,
-        FTA:  p.FTA + c.FTA,
-        REB:  p.REB + c.REB,
-        AST:  p.AST + c.AST,
-        STL:  p.STL + c.STL,
-        BLK:  p.BLK + c.BLK,
-        TOV:  p.TOV + c.TOV,
+        PTS:  Math.round((p.PTS + c.PTS)*100)/100,
+        FGM:  Math.round((p.FGM + c.FGM)*100)/100,
+        FGA:  Math.round((p.FGA + c.FGA)*100)/100,
+        FG3M: Math.round((p.FG3M + c.FG3M)*100)/100,
+        FTM:  Math.round((p.FTM + c.FTM)*100)/100,
+        FTA:  Math.round((p.FTA + c.FTA)*100)/100,
+        REB:  Math.round((p.REB + c.REB)*100)/100,
+        AST:  Math.round((p.AST + c.AST)*100)/100,
+        STL:  Math.round((p.STL + c.STL)*100)/100,
+        BLK:  Math.round((p.BLK + c.BLK)*100)/100,
+        TOV:  Math.round((p.TOV + c.TOV)*100)/100,
       }},{PTS:0,FGM:0,FGA:0,FG3M:0,FTM:0,FTA:0,REB:0,AST:0,STL:0,BLK:0,TOV:0});
 
 
     const tradefor = this.props.aratings.filter(item => this.state.choiceb.includes(item.Player_Name)).reduce(function(p, c) {
       return {
-        PTS:  p.PTS + c.PTS,
-        FGM:  p.FGM + c.FGM,
-        FGA:  p.FGA + c.FGA,
-        FG3M: p.FG3M + c.FG3M,
-        FTM:  p.FTM + c.FTM,
-        FTA:  p.FTA + c.FTA,
-        REB:  p.REB + c.REB,
-        AST:  p.AST + c.AST,
-        STL:  p.STL + c.STL,
-        BLK:  p.BLK + c.BLK,
-        TOV:  p.TOV + c.TOV,
+        PTS:  Math.round((p.PTS + c.PTS)*100)/100,
+        FGM:  Math.round((p.FGM + c.FGM)*100)/100,
+        FGA:  Math.round((p.FGA + c.FGA)*100)/100,
+        FG3M: Math.round((p.FG3M + c.FG3M)*100)/100,
+        FTM:  Math.round((p.FTM + c.FTM)*100)/100,
+        FTA:  Math.round((p.FTA + c.FTA)*100)/100,
+        REB:  Math.round((p.REB + c.REB)*100)/100,
+        AST:  Math.round((p.AST + c.AST)*100)/100,
+        STL:  Math.round((p.STL + c.STL)*100)/100,
+        BLK:  Math.round((p.BLK + c.BLK)*100)/100,
+        TOV:  Math.round((p.TOV + c.TOV)*100)/100,
       }},{PTS:0,FGM:0,FGA:0,FG3M:0,FTM:0,FTA:0,REB:0,AST:0,STL:0,BLK:0,TOV:0});
     
     console.log(tradeaway);
     console.log(tradefor);
+
+    const tot = Object.keys(tradefor).reduce((p, c) => {
+        p[c] = Math.round((tradefor[c] - tradeaway[c])*100)/100;
+        return p;
+    }, {});
+
+    console.log(tot);
+
+    const teamavg = this.props.avg.filter(item => item.team === this.state.ateam)[0];
+
+    console.log(teamavg);
+    const updatedavg = Object.keys(tot).reduce((p, c) => {
+      p[c] = Math.round((parseFloat(p[c]) + tot[c])*100)/100;
+      return p;
+    }, {...teamavg});
+
+    updatedavg.FG_PCT = Math.round((updatedavg.FGM/updatedavg.FGA)*1000)/1000;
+    updatedavg.FT_PCT = Math.round((updatedavg.FTM/updatedavg.FTA)*1000)/1000;
+    console.log(updatedavg);
+    const netrank = Object.keys(tot).reduce((p,c) => {
+        p[c] = Math.round((tot[c]/this.props.rkstd[c])*10);
+        return p;
+    },{});
+    netrank.FG_PCT = Math.round((((teamavg.FGM + tot.FGM)/(teamavg.FGA + tot.FGA) - parseFloat(teamavg.FG_PCT))/this.props.rkstd.FG_PCT)*10)
+    netrank.FT_PCT = Math.round((((teamavg.FTM + tot.FTM)/(teamavg.FTA + tot.FTA) - parseFloat(teamavg.FT_PCT))/this.props.rkstd.FT_PCT)*10)
+    netrank.TOV = netrank.TOV * -1
+    console.log(netrank);
+    
   }
 
   render() {
