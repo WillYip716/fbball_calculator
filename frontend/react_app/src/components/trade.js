@@ -12,93 +12,9 @@ class Trade extends Component {
     bbox:"",
     listb:[],
     choiceb:[],
-    columns: [
-      {
-        dataField: 'Player_Name',
-        text: 'Name',
-        sort: true
-      },
-      {
-        dataField: 'PosStr',
-        text: 'Pos.',
-        sort: true
-      },
-      {
-        dataField: 'GP',
-        text: 'GP',
-        sort: true
-      },
-      {
-        dataField: 'TotalRating',
-        text: 'Rating',
-        sort: true
-      },
-      {
-        dataField: 'PTS',
-        text: 'PTS',
-        sort: true
-      },
-      {
-        dataField: 'FGM',
-        text: 'FGM',
-        sort: true
-      },
-      {
-        dataField: 'FGA',
-        text: 'FGA',
-        sort: true
-      },
-      {
-        dataField: 'FG_PCT',
-        text: 'FG%',
-        sort: true
-      }, 
-      {
-        dataField: 'FG3M',
-        text: '3PTM',
-        sort: true
-      },
-      {
-        dataField: 'FTM',
-        text: 'FTM',
-        sort: true
-      },
-      {
-        dataField: 'FTA',
-        text: 'FTA',
-        sort: true
-      },
-      {
-        dataField: 'FT_PCT',
-        text: 'FT%',
-        sort: true
-      },
-      {
-        dataField: 'REB',
-        text: 'REB',
-        sort: true
-      },
-      {
-        dataField: 'AST',
-        text: 'AST',
-        sort: true
-      },
-      {
-        dataField: 'STL',
-        text: 'STL',
-        sort: true
-      },
-      {
-        dataField: 'BLK',
-        text: 'BLK',
-        sort: true
-      },
-      {
-        dataField: 'TOV',
-        text: 'TOV',
-        sort: true
-      },
-    ]
+    up:{},
+    traded:false,
+
   }
 
   componentDidMount() {
@@ -194,23 +110,23 @@ class Trade extends Component {
         TOV:  Math.round((p.TOV + c.TOV)*100)/100,
       }},{PTS:0,FGM:0,FGA:0,FG3M:0,FTM:0,FTA:0,REB:0,AST:0,STL:0,BLK:0,TOV:0});
     
-    console.log(tradeaway);
-    console.log(tradefor);
+    //console.log(tradeaway);
+    //console.log(tradefor);
 
     const tot = Object.keys(tradefor).reduce((p, c) => {
         p[c] = Math.round((tradefor[c] - tradeaway[c])*100)/100;
         return p;
     }, {});
 
-    console.log(tot);
+    //console.log(tot);
 
     const teamavg = this.props.avg.filter(item => item.team === this.state.ateam)[0];
 
-    console.log(teamavg);
+    //console.log(teamavg);
     const updatedavg = Object.keys(tot).reduce((p, c) => {
-      p[c] = Math.round((parseFloat(p[c]) + tot[c])*100)/100;
+      p[c] = Math.round((parseFloat(teamavg[c]) + tot[c])*100)/100;
       return p;
-    }, {...teamavg});
+    }, {});
 
     updatedavg.FG_PCT = Math.round((updatedavg.FGM/updatedavg.FGA)*1000)/1000;
     updatedavg.FT_PCT = Math.round((updatedavg.FTM/updatedavg.FTA)*1000)/1000;
@@ -222,11 +138,87 @@ class Trade extends Component {
     netrank.FG_PCT = Math.round((((teamavg.FGM + tot.FGM)/(teamavg.FGA + tot.FGA) - parseFloat(teamavg.FG_PCT))/this.props.rkstd.FG_PCT)*10)
     netrank.FT_PCT = Math.round((((teamavg.FTM + tot.FTM)/(teamavg.FTA + tot.FTA) - parseFloat(teamavg.FT_PCT))/this.props.rkstd.FT_PCT)*10)
     netrank.TOV = netrank.TOV * -1
-    console.log(netrank);
-    
+    //console.log(netrank);
+
+    this.setState({
+      up: updatedavg,
+      traded:true,
+    },() => {
+      console.log(this.state.up.length);
+    })
+
   }
 
+  testtable(){
+    if(this.state.up){
+      const teamavg = this.props.avg.filter(item => item.team === this.state.ateam)[0];
+      return(
+        <table className="table table-striped table-hover table-bordered">
+          <thead>
+            <tr>
+              <th>{this.state.ateam}</th>
+              <th>PTS</th>
+              <th>FGM</th>
+              <th>FGA</th>
+              <th>FG%</th>
+              <th>3PTM</th>
+              <th>FTM</th>
+              <th>FTA</th>
+              <th>FT%</th>
+              <th>REB</th>
+              <th>AST</th>
+              <th>STL</th>
+              <th>BLK</th>
+              <th>TOV</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Before</td>
+              <td>{teamavg.PTS}</td>
+              <td>{teamavg.FGM}</td>
+              <td>{teamavg.FGA}</td>
+              <td>{teamavg.FG_PCT}</td>
+              <td>{teamavg.FG3M}</td>
+              <td>{teamavg.FTM}</td>
+              <td>{teamavg.FTA}</td>
+              <td>{teamavg.FT_PCT}</td>
+              <td>{teamavg.REB}</td>
+              <td>{teamavg.AST}</td>
+              <td>{teamavg.STL}</td>
+              <td>{teamavg.BLK}</td>
+              <td>{teamavg.TOV}</td>
+            </tr>
+            <tr>
+              <td>After</td>
+              <td>{this.state.up.PTS}</td>
+              <td>{this.state.up.FGM}</td>
+              <td>{this.state.up.FGA}</td>
+              <td>{this.state.up.FG_PCT}</td>
+              <td>{this.state.up.FG3M}</td>
+              <td>{this.state.up.FTM}</td>
+              <td>{this.state.up.FTA}</td>
+              <td>{this.state.up.FT_PCT}</td>
+              <td>{this.state.up.REB}</td>
+              <td>{this.state.up.AST}</td>
+              <td>{this.state.up.STL}</td>
+              <td>{this.state.up.BLK}</td>
+              <td>{this.state.up.TOV}</td>
+            </tr>
+          </tbody>
+        </table> 
+      )
+    }
+    else{
+      return(<div>test</div>)
+    }
+
+  }
+
+
+
   render() {
+
     return (
       <div className="container">
         <div style={{display:"flex",marginBottom:"2rem"}}>
@@ -236,10 +228,10 @@ class Trade extends Component {
         }
         </div>
         
-        
-        
-        
-        
+        {this.state.traded?
+          this.testtable()
+          :<div>hello there</div>
+        }
         <div className="tradeform">
             <h6 style={{color:"red"}}>{[...this.state.choicea].join(",")}</h6>
             <Form onSubmit={this.addlista.bind(this)} role="form">
