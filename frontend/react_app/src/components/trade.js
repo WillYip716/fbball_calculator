@@ -14,7 +14,7 @@ class Trade extends Component {
     choiceb:[],
     up:{},
     traded:false,
-
+    colorcode:{},
   }
 
   componentDidMount() {
@@ -118,11 +118,10 @@ class Trade extends Component {
         return p;
     }, {});
 
-    //console.log(tot);
+    console.log(tot);
 
     const teamavg = this.props.avg.filter(item => item.team === this.state.ateam)[0];
 
-    //console.log(teamavg);
     const updatedavg = Object.keys(tot).reduce((p, c) => {
       p[c] = Math.round((parseFloat(teamavg[c]) + tot[c])*100)/100;
       return p;
@@ -130,7 +129,6 @@ class Trade extends Component {
 
     updatedavg.FG_PCT = Math.round((updatedavg.FGM/updatedavg.FGA)*1000)/1000;
     updatedavg.FT_PCT = Math.round((updatedavg.FTM/updatedavg.FTA)*1000)/1000;
-    console.log(updatedavg);
     const netrank = Object.keys(tot).reduce((p,c) => {
         p[c] = Math.round((tot[c]/this.props.rkstd[c])*10);
         return p;
@@ -138,11 +136,35 @@ class Trade extends Component {
     netrank.FG_PCT = Math.round((((teamavg.FGM + tot.FGM)/(teamavg.FGA + tot.FGA) - parseFloat(teamavg.FG_PCT))/this.props.rkstd.FG_PCT)*10)
     netrank.FT_PCT = Math.round((((teamavg.FTM + tot.FTM)/(teamavg.FTA + tot.FTA) - parseFloat(teamavg.FT_PCT))/this.props.rkstd.FT_PCT)*10)
     netrank.TOV = netrank.TOV * -1
-    //console.log(netrank);
+
+    console.log(netrank)
+    const colorcoded = Object.keys(netrank).reduce((p, c) => {
+      if(netrank[c] <= -20){
+        p[c] = "darkred"
+      }
+      else if(-20 <= netrank[c] && netrank[c] < -10){
+        p[c] = "red"
+      } 
+      else if(-10 <= netrank[c] && netrank[c] < 0){
+        p[c] = "tomato"
+      }
+      else if(0 <= netrank[c] && netrank[c] < 10){
+        p[c] = "lime"
+      } 
+      else if(10 <= netrank[c] && netrank[c] < 20){
+        p[c] = "olive"
+      }
+      else if(20 <= netrank[c]){
+        p[c] = "darkgreen"
+      }
+      return p;
+    }, {});
+    
 
     this.setState({
       up: updatedavg,
       traded:true,
+      colorcode:colorcoded,
     },() => {
       console.log(this.state.up.length);
     })
@@ -153,66 +175,99 @@ class Trade extends Component {
     if(this.state.up){
       const teamavg = this.props.avg.filter(item => item.team === this.state.ateam)[0];
       return(
-        <table className="table table-striped table-hover table-bordered">
-          <thead>
-            <tr>
-              <th>{this.state.ateam}</th>
-              <th>PTS</th>
-              <th>FGM</th>
-              <th>FGA</th>
-              <th>FG%</th>
-              <th>3PTM</th>
-              <th>FTM</th>
-              <th>FTA</th>
-              <th>FT%</th>
-              <th>REB</th>
-              <th>AST</th>
-              <th>STL</th>
-              <th>BLK</th>
-              <th>TOV</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Before</td>
-              <td>{teamavg.PTS}</td>
-              <td>{teamavg.FGM}</td>
-              <td>{teamavg.FGA}</td>
-              <td>{teamavg.FG_PCT}</td>
-              <td>{teamavg.FG3M}</td>
-              <td>{teamavg.FTM}</td>
-              <td>{teamavg.FTA}</td>
-              <td>{teamavg.FT_PCT}</td>
-              <td>{teamavg.REB}</td>
-              <td>{teamavg.AST}</td>
-              <td>{teamavg.STL}</td>
-              <td>{teamavg.BLK}</td>
-              <td>{teamavg.TOV}</td>
-            </tr>
-            <tr>
-              <td>After</td>
-              <td>{this.state.up.PTS}</td>
-              <td>{this.state.up.FGM}</td>
-              <td>{this.state.up.FGA}</td>
-              <td>{this.state.up.FG_PCT}</td>
-              <td>{this.state.up.FG3M}</td>
-              <td>{this.state.up.FTM}</td>
-              <td>{this.state.up.FTA}</td>
-              <td>{this.state.up.FT_PCT}</td>
-              <td>{this.state.up.REB}</td>
-              <td>{this.state.up.AST}</td>
-              <td>{this.state.up.STL}</td>
-              <td>{this.state.up.BLK}</td>
-              <td>{this.state.up.TOV}</td>
-            </tr>
-          </tbody>
-        </table> 
+        <div>
+          <table className="table table-striped table-hover table-bordered">
+            <thead>
+              <tr>
+                <th>Color Code</th>
+                <th style={{color:"darkred"}}>Greater than 2 Rank Decrease</th>
+                <th style={{color:"red"}}>Around 1 Rank Decrease</th>
+                <th style={{color:"tomato"}}>Slight Decrease</th>
+                <th style={{color:"lime"}}>Slight Increase</th>
+                <th style={{color:"olive"}}>Around 1 Rank Increase</th>
+                <th style={{color:"darkgreen"}}>Greater than 2 Rank Increase</th>
+              </tr>
+            </thead>
+          </table>
+          <table className="table table-striped table-hover table-bordered">
+            <thead>
+              <tr>
+                <th>{this.state.ateam}</th>
+                <th>PTS</th>
+                <th>FGM</th>
+                <th>FGA</th>
+                <th>FG%</th>
+                <th>3PTM</th>
+                <th>FTM</th>
+                <th>FTA</th>
+                <th>FT%</th>
+                <th>REB</th>
+                <th>AST</th>
+                <th>STL</th>
+                <th>BLK</th>
+                <th>TOV</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Before</td>
+                <td>{teamavg.PTS}</td>
+                <td>{teamavg.FGM}</td>
+                <td>{teamavg.FGA}</td>
+                <td>{teamavg.FG_PCT}</td>
+                <td>{teamavg.FG3M}</td>
+                <td>{teamavg.FTM}</td>
+                <td>{teamavg.FTA}</td>
+                <td>{teamavg.FT_PCT}</td>
+                <td>{teamavg.REB}</td>
+                <td>{teamavg.AST}</td>
+                <td>{teamavg.STL}</td>
+                <td>{teamavg.BLK}</td>
+                <td>{teamavg.TOV}</td>
+              </tr>
+              <tr>
+                <td>After</td>
+                <td style={{color: this.state.colorcode.PTS}}>{this.state.up.PTS}</td>
+                <td >{this.state.up.FGM}</td>
+                <td >{this.state.up.FGA}</td>
+                <td style={{color: this.state.colorcode.FG_PCT}}>{this.state.up.FG_PCT}</td>
+                <td style={{color: this.state.colorcode.FG3M}}>{this.state.up.FG3M}</td>
+                <td >{this.state.up.FTM}</td>
+                <td >{this.state.up.FTA}</td>
+                <td style={{color: this.state.colorcode.FT_PCT}}>{this.state.up.FT_PCT}</td>
+                <td style={{color: this.state.colorcode.REB}}>{this.state.up.REB}</td>
+                <td style={{color: this.state.colorcode.AST}}>{this.state.up.AST}</td>
+                <td style={{color: this.state.colorcode.STL}}>{this.state.up.STL}</td>
+                <td style={{color: this.state.colorcode.BLK}}>{this.state.up.BLK}</td>
+                <td style={{color: this.state.colorcode.TOV}}>{this.state.up.TOV}</td>
+              </tr>
+            </tbody>
+          </table> 
+        </div>
+        
       )
     }
     else{
       return(<div>test</div>)
     }
 
+  }
+
+  resetClick(){
+    const r = this.props.teams.reduce((a, c) => a.concat(c["players"]),[])    
+    const rostered = this.props.aratings.filter(item => r.includes(item.Player_Name)).sort((a,b) => (a.Player_Name < b.Player_Name) ? -1 : ((b.Player_Name < a.Player_Name) ? 1 : 0))
+    this.setState({
+      lista:rostered,
+      choicea:[],
+      ateam:"",
+      abox:"",
+      bbox:"",
+      listb:[],
+      choiceb:[],
+      up:{},
+      traded:false,
+      colorcode:{},
+    })
   }
 
 
@@ -226,14 +281,18 @@ class Trade extends Component {
           <button className="btn btn-primary" style={{margin:"auto",fontSize:"2rem"}} onClick={() => this.tradeClick()}>Trade</button>
           :<h1 style={{margin:"auto"}}>Trade</h1>
         }
+        {this.state.traded?
+          <button className="btn btn-primary" style={{margin:"auto",fontSize:"2rem"}} onClick={() => this.resetClick()}>Reset</button>
+          :<div/>
+        }
         </div>
         
         {this.state.traded?
           this.testtable()
-          :<div>hello there</div>
+          :<div></div>
         }
         <div className="tradeform">
-            <h6 style={{color:"red"}}>{[...this.state.choicea].join(",")}</h6>
+            <h6 >Trading away: <strong style={{color:"red"}}>{[...this.state.choicea].join(",")}</strong></h6>
             <Form onSubmit={this.addlista.bind(this)} role="form">
                 <Form.Group controlId="exampleForm.SelectCustom">
                   <Form.Label>Step 1: Select a rostered player</Form.Label>
@@ -251,7 +310,7 @@ class Trade extends Component {
             </Form>
         </div>
         <div className="tradeform">
-            <h6 style={{color:"green"}}>{[...this.state.choiceb].join(",")}</h6>
+            <h6 >Trading For: <strong style={{color:"green"}}>{[...this.state.choiceb].join(",")}</strong></h6>
             <Form onSubmit={this.addlistb.bind(this)} role="form">
                 <Form.Group controlId="exampleForm.SelectCustom">
                   <Form.Label>Step 2: Select a player to trade for</Form.Label>

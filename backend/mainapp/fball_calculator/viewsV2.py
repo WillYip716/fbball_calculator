@@ -191,8 +191,9 @@ def rankingsHelper(d):
             rankavg[j] = rankavg[j].rank(method='max',ascending=False)
             ranktot[j] = ranktot[j].rank(method='max',ascending=False)
     
-    rankavg["rottotal"] = rankavg.sum(axis=1)
+    rankavg["rottotal"] = rankavg[["FG_PCT","FG3M","FT_PCT","REB","AST","STL","BLK","TOV","PTS"]].sum(axis=1)
     ranktot["rottotal"] = ranktot.sum(axis=1)
+    
 
 
     rosters = {
