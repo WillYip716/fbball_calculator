@@ -37,6 +37,11 @@ class Team extends Component {
           sort: true
         },
         {
+          dataField: 'TotalRating',
+          text: 'Rating',
+          sort: true
+        },
+        {
           dataField: 'PTS',
           text: 'PTS',
           sort: true
@@ -132,7 +137,7 @@ class Team extends Component {
           sort: true
         },
         {
-          dataField: 'TotalRating',
+          dataField: 'TotalRatingEdited',
           text: 'Rating',
           sort: true
         },
@@ -208,7 +213,7 @@ class Team extends Component {
           sort: true
         },
         {
-          dataField: 'TotalRating',
+          dataField: 'TotalRatingEdited',
           text: 'Rating',
           sort: true
         },
@@ -276,11 +281,11 @@ class Team extends Component {
       if(this.props.teams && (parseInt(this.props.match.params.id) < this.props.teams.length)){
         const name = this.props.teams[parseInt(this.props.match.params.id)].teamName;
         const players = this.props.teams[parseInt(this.props.match.params.id)].players;
-        const roster = this.props.aratings.filter(item => players.includes(item.Player_Name));
+        const updatedroster = this.props.aratings.filter(item => players.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)})));
         const f = this.pickHighest(this.props.avgrank.filter(item=>item.team===name)[0]);
         this.setState({
             teamName: name,
-            rosteredplayers: roster,
+            rosteredplayers: updatedroster,
             focus:f,
         })
       }
@@ -308,7 +313,7 @@ class Team extends Component {
           })
           if(this.state.pos === "ratings"){
             const newColumn = this.state.ratingscolumnsbase.filter(element => this.state.sfil.indexOf(element.dataField) === -1);
-            const updatedroster = this.props.aratings.filter(item => players.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
+            const updatedroster = this.props.aratings.filter(item => players.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)})));
             
             this.setState({
                 ratingscolumns:newColumn,
@@ -345,7 +350,7 @@ class Team extends Component {
       //let u = ["PTSrt","FG_PCTrt","FG3Mrt","FT_PCTrt","REBrt","ASTrt","STLrt","BLKrt","TOVrt"];
       const newColumn = this.state.ratingscolumnsbase.filter(element => this.state.sfil.indexOf(element.dataField) === -1);
           
-      const updatedroster = this.state.rosteredplayers.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)})));
+      const updatedroster = this.state.rosteredplayers.map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)})));
       
       this.setState({
           ratingscolumns:newColumn,

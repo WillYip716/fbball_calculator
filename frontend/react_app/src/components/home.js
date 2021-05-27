@@ -95,16 +95,6 @@ class Home extends Component {
       },
     ]
   }
-
-  /*componentDidMount() {
-    axios.get('/allplayers')
-      .then(response => {
-        console.log(response)
-        this.setState({
-          players: response.data.a,
-        });
-      });
-  }*/
   
   render() {
     return (

@@ -5,22 +5,26 @@ import pandas as pd
 
 def run():
     #players = leaguedashplayerstats.LeagueDashPlayerStats(season='2020-21',per_mode_detailed="PerGame",season_type_all_star="Regular Season")
-    #players = Player.objects.all()
+    players = Player.objects.all()
 
 
 
-    #for i in players:
+    for i in players:
 
-        """print(i.Player_Name)
+        print(i.Player_Name)
 
 
-        #temp = list(i.Pos.all().values())
-        #b = ''.join(val['Position'] for val in temp)
+        temp = list(i.Pos.all().values())
+        b = ''.join(val['Position'] for val in temp)
 
+        i.PosStr = b
+
+        i.save()
+        """
         i.FTeamPos = ""
         i.FTeam = None
 
-        i.save()"""
+        
         p = Player.objects.exclude(FTeam__isnull=True)
 
         g = pd.DataFrame(p.filter(Pos__Position='G').values())
@@ -46,6 +50,7 @@ def run():
                 Pos = i,
                 defaults={"FGM":j.FGM,"FGA":j.FGA,"FG_PCT":j.FG_PCT,"FG3M":j.FG3M,"FTM":j.FTM,"FTA":j.FTA,"FT_PCT":j.FT_PCT,"REB":j.REB,"AST":j.AST,"STL":j.STL,"BLK":j.BLK,"TOV":j.TOV,"PTS":j.PTS},
             )
+        """
 
 
         

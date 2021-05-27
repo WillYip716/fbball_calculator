@@ -27,7 +27,7 @@ footer{
 }
 
 .table{
-    font-size: .75rem;
+    font-size: .85rem;
 }
 
 .hidden { 
@@ -60,6 +60,11 @@ footer{
 .dropdown-item{
     background-color: #343a40 !important;
     color:white;
+}
+
+.dropdown-menu{
+    padding: 0;
+    margin: .5rem;
 }
 
 .tradeform{

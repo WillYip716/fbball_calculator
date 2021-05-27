@@ -34,7 +34,7 @@ class Ratings extends Component {
         sort: true
       },
       {
-        dataField: 'TotalRating',
+        dataField: 'TotalRatingEdited',
         text: 'Rating',
         sort: true
       },
@@ -110,7 +110,7 @@ class Ratings extends Component {
         sort: true
       },
       {
-        dataField: 'TotalRating',
+        dataField: 'TotalRatingEdited',
         text: 'Rating',
         sort: true
       },
@@ -173,10 +173,10 @@ class Ratings extends Component {
 
   componentDidMount() {
     if(this.props.aratings){
-      const updatedg = this.props.gratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
-      const updatedf = this.props.fratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
-      const updatedc = this.props.cratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
-      const updateda = this.props.aratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
+      const updatedg = this.props.gratings.slice().map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)}))).sort((a,b) => (a.TotalRatingEdited > b.TotalRatingEdited) ? -1 : ((b.TotalRatingEdited > a.TotalRatingEdited) ? 1 : 0));
+      const updatedf = this.props.fratings.slice().map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)}))).sort((a,b) => (a.TotalRatingEdited > b.TotalRatingEdited) ? -1 : ((b.TotalRatingEdited > a.TotalRatingEdited) ? 1 : 0));
+      const updatedc = this.props.cratings.slice().map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)}))).sort((a,b) => (a.TotalRatingEdited > b.TotalRatingEdited) ? -1 : ((b.TotalRatingEdited > a.TotalRatingEdited) ? 1 : 0));
+      const updateda = this.props.aratings.slice().map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)}))).sort((a,b) => (a.TotalRatingEdited > b.TotalRatingEdited) ? -1 : ((b.TotalRatingEdited > a.TotalRatingEdited) ? 1 : 0));
       this.setState({
           guards: updatedg,
           forwards: updatedf,
@@ -231,10 +231,10 @@ class Ratings extends Component {
       if(this.state.av === "available"){
           const rostered = this.props.teams.reduce((a, c) => a.concat(c["players"]),[])
           
-          const updatedg = this.props.gratings.filter(item => !rostered.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
-          const updatedf = this.props.fratings.filter(item => !rostered.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
-          const updatedc = this.props.cratings.filter(item => !rostered.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
-          const updateda = this.props.aratings.filter(item => !rostered.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
+          const updatedg = this.props.gratings.slice().filter(item => !rostered.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)}))).sort((a,b) => (a.TotalRatingEdited > b.TotalRatingEdited) ? -1 : ((b.TotalRatingEdited > a.TotalRatingEdited) ? 1 : 0));
+          const updatedf = this.props.fratings.slice().filter(item => !rostered.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)}))).sort((a,b) => (a.TotalRatingEdited > b.TotalRatingEdited) ? -1 : ((b.TotalRatingEdited > a.TotalRatingEdited) ? 1 : 0));
+          const updatedc = this.props.cratings.slice().filter(item => !rostered.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)}))).sort((a,b) => (a.TotalRatingEdited > b.TotalRatingEdited) ? -1 : ((b.TotalRatingEdited > a.TotalRatingEdited) ? 1 : 0));
+          const updateda = this.props.aratings.slice().filter(item => !rostered.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)}))).sort((a,b) => (a.TotalRatingEdited > b.TotalRatingEdited) ? -1 : ((b.TotalRatingEdited > a.TotalRatingEdited) ? 1 : 0));
           
           this.setState({
               columns:newColumn,
@@ -244,10 +244,10 @@ class Ratings extends Component {
               all: updateda,
           });
       }else{
-          const updatedg = this.props.gratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
-          const updatedf = this.props.fratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
-          const updatedc = this.props.cratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
-          const updateda = this.props.aratings.map(obj=>(Object.assign(obj, { TotalRating: this.filTotal(obj)}))).sort((a,b) => (a.TotalRating > b.TotalRating) ? -1 : ((b.TotalRating > a.TotalRating) ? 1 : 0));
+          const updatedg = this.props.gratings.slice().map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)}))).sort((a,b) => (a.TotalRatingEdited > b.TotalRatingEdited) ? -1 : ((b.TotalRatingEdited > a.TotalRatingEdited) ? 1 : 0));
+          const updatedf = this.props.fratings.slice().map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)}))).sort((a,b) => (a.TotalRatingEdited > b.TotalRatingEdited) ? -1 : ((b.TotalRatingEdited > a.TotalRatingEdited) ? 1 : 0));
+          const updatedc = this.props.cratings.slice().map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)}))).sort((a,b) => (a.TotalRatingEdited > b.TotalRatingEdited) ? -1 : ((b.TotalRatingEdited > a.TotalRatingEdited) ? 1 : 0));
+          const updateda = this.props.aratings.slice().map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)}))).sort((a,b) => (a.TotalRatingEdited > b.TotalRatingEdited) ? -1 : ((b.TotalRatingEdited > a.TotalRatingEdited) ? 1 : 0));
 
           this.setState({
             columns:newColumn,
