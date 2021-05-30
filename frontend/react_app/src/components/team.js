@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
-import { Form,Button, Table } from "react-bootstrap";
+import { Form,Button} from "react-bootstrap";
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
@@ -20,6 +20,53 @@ class Team extends Component {
       focus:[],
       pos:"avg",
       sfil:[],
+      overview:[],
+      overcolumns: [
+        {
+          dataField: 'cat',
+          text: '',
+        },
+        {
+          dataField: 'PTS',
+          text: 'PTS',
+        },
+        {
+          dataField: 'FG_PCT',
+          text: 'FG%',
+        }, 
+        {
+          dataField: 'FG3M',
+          text: '3PTM',
+        },
+        {
+          dataField: 'FT_PCT',
+          text: 'FT%',
+        },
+        {
+          dataField: 'REB',
+          text: 'REB',
+        },
+        {
+          dataField: 'AST',
+          text: 'AST',
+        },
+        {
+          dataField: 'STL',
+          text: 'STL',
+        },
+        {
+          dataField: 'BLK',
+          text: 'BLK',
+        },
+        {
+          dataField: 'TOV',
+          text: 'TOV',
+        },
+        {
+          dataField: 'rottotal',
+          text: 'Total',
+        },
+      ],
       columns: [
         {
           dataField: 'Player_Name',
@@ -283,10 +330,23 @@ class Team extends Component {
         const players = this.props.teams[parseInt(this.props.match.params.id)].players;
         const updatedroster = this.props.aratings.filter(item => players.includes(item.Player_Name)).map(obj=>(Object.assign(obj, { TotalRatingEdited: this.filTotal(obj)})));
         const f = this.pickHighest(this.props.avgrank.filter(item=>item.team===name)[0]);
+
+        const avg = this.props.avg.filter(item => item.team ===name)[0];
+        avg.cat = "Team Total Avg"
+
+        const rank = this.props.avgrank.filter(item => item.team ===name)[0];
+        rank.cat = "Team Avg Rank"
+
+        const tr = this.props.tr.filter(item => item.team ===name)[0];
+        tr.cat = "Total Team Rating"
+
+        const ovr = [avg,rank,tr];
+
         this.setState({
             teamName: name,
             rosteredplayers: updatedroster,
             focus:f,
+            overview: ovr,
         })
       }
       else{
@@ -305,11 +365,24 @@ class Team extends Component {
           const players = this.props.teams[parseInt(this.props.match.params.id)].players;
           const roster = this.props.aratings.filter(item => players.includes(item.Player_Name));
           const f = this.pickHighest(this.props.avgrank.filter(item=>item.team===name)[0]);
+
+          const avg = this.props.avg.filter(item => item.team ===name)[0];
+          avg.cat = "Team Total Avg"
+
+          const rank = this.props.avgrank.filter(item => item.team ===name)[0];
+          rank.cat = "Team Avg Rank"
+
+          const tr = this.props.tr.filter(item => item.team ===name)[0];
+          tr.cat = "Total Team Rating"
+
+          const ovr = [avg,rank,tr];
+
           this.setState({
               teamName: name,
               rosteredplayers: roster,
               ratingscolumn: this.state.ratingscolumnsbase,
               focus: f,
+              overview: ovr,
           })
           if(this.state.pos === "ratings"){
             const newColumn = this.state.ratingscolumnsbase.filter(element => this.state.sfil.indexOf(element.dataField) === -1);
@@ -383,6 +456,9 @@ class Team extends Component {
            else if(key === "FT_PCT"){
               requiredObj.push("FT%");
            }
+           else if(key === "FG3M"){
+            requiredObj.push("3PTM");
+         }
            else{
               requiredObj.push(key);
            }
@@ -433,7 +509,7 @@ class Team extends Component {
               </Form>
             </div>
           <br/>
-          <Table>
+          <table className="table table-striped table-hover table-bordered">
             <thead>
               <tr>
                 <th>Suggested Stats to Focus on</th>
@@ -442,7 +518,19 @@ class Team extends Component {
                 ))}
               </tr>
             </thead>
-          </Table>
+          </table>
+          
+
+          <h3>Team Summary</h3>
+          {this.state.overview ?
+            <BootstrapTable 
+            striped
+            hover
+            keyField='PTS' 
+            data={ this.state.overview } 
+            columns={ this.state.overcolumns }/>
+            :<h5>loading or no compiled data</h5>
+          }
 
 
           <div className={this.state.pos !== "avg" ? 'hidden' : ''}>
@@ -488,6 +576,7 @@ class Team extends Component {
       avgrank: state.comp.rankings.rankavg,
       totrank: state.comp.rankings.ranktot,
       rkstd: state.comp.rankings.rkstd,
+      tr: state.comp.rankings.teamrat
     };
   };
   

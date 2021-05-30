@@ -44,6 +44,32 @@ def compile(request):
     }
 
     rankings = rankingsHelper(data)
+    ratingstotals = []
+    for i in data:
+        p = i["players"][0:13]
+        sp = a[a.Player_Name.isin(p)]
+        sum_column = sp.sum(axis=0)
+        teamval = {
+            'team': i["teamName"],
+            'FGM':round(sum_column.FGMrt,2),
+            'FGA':round(sum_column.FGArt,2),
+            'FG_PCT': round(sum_column.FG_PCTrt,3),
+            'FG3M':  round(sum_column.FG3Mrt,2),
+            'FTM': round(sum_column.FTMrt,2),
+            'FTA': round(sum_column.FTArt,2),
+            'FT_PCT': round(sum_column.FT_PCTrt,3),
+            'REB': round(sum_column.REBrt,2),
+            'AST': round(sum_column.ASTrt,2),
+            'STL': round(sum_column.STLrt, 2),
+            'BLK': round(sum_column.BLKrt, 2), #round(sum_column.BLK),
+            'TOV': round(sum_column.TOVrt,2),
+            'PTS': round(sum_column.PTSrt,2),
+            'rottotal': round(sum_column.FG_PCTrt + sum_column.FG3Mrt + sum_column.FT_PCTrt + sum_column.REBrt + sum_column.ASTrt + sum_column.STLrt + sum_column.BLKrt + sum_column.TOVrt + sum_column.PTSrt ,2)
+        }
+        ratingstotals.append(teamval)
+
+    rankings['teamrat'] = ratingstotals
+
     data = {
         "ratings": ratings,
         "avr": avrF.to_dict("records"),

@@ -77,7 +77,7 @@ class Trade extends Component {
   }
   
   tradeClick(){
-    console.log("clicked");
+    
     //["PTS","FG_PCT","FG3M","FT_PCT","REB","AST","STL","BLK","TOV"]
     const tradeaway = this.props.aratings.filter(item => this.state.choicea.includes(item.Player_Name)).reduce(function(p, c) {
       return {
@@ -110,15 +110,12 @@ class Trade extends Component {
         TOV:  Math.round((p.TOV + c.TOV)*100)/100,
       }},{PTS:0,FGM:0,FGA:0,FG3M:0,FTM:0,FTA:0,REB:0,AST:0,STL:0,BLK:0,TOV:0});
     
-    //console.log(tradeaway);
-    //console.log(tradefor);
 
     const tot = Object.keys(tradefor).reduce((p, c) => {
         p[c] = Math.round((tradefor[c] - tradeaway[c])*100)/100;
         return p;
     }, {});
 
-    console.log(tot);
 
     const teamavg = this.props.avg.filter(item => item.team === this.state.ateam)[0];
 
@@ -137,7 +134,6 @@ class Trade extends Component {
     netrank.FT_PCT = Math.round((((teamavg.FTM + tot.FTM)/(teamavg.FTA + tot.FTA) - parseFloat(teamavg.FT_PCT))/this.props.rkstd.FT_PCT)*10)
     netrank.TOV = netrank.TOV * -1
 
-    console.log(netrank)
     const colorcoded = Object.keys(netrank).reduce((p, c) => {
       if(netrank[c] <= -20){
         p[c] = "darkred"
@@ -165,8 +161,6 @@ class Trade extends Component {
       up: updatedavg,
       traded:true,
       colorcode:colorcoded,
-    },() => {
-      console.log(this.state.up.length);
     })
 
   }

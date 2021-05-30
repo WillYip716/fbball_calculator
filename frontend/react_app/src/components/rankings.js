@@ -61,7 +61,7 @@ class Rankings extends Component {
       },
       {
         dataField: 'rottotal',
-        text: 'ROT Score',
+        text: 'Total',
         sort: true
       },
     ],
@@ -133,9 +133,8 @@ class Rankings extends Component {
 
         <ToggleButtonGroup type="radio" name="options" defaultValue="average" onChange={this.changetog.bind(this)}>
           <ToggleButton value="average" style={{padding: "5px",border: "black 1px solid"}}>Team Average</ToggleButton>
-          <ToggleButton value="total" style={{padding: "5px", border: "black 1px solid"}}>Team Remaining Total</ToggleButton>
-          <ToggleButton value="avgrank" style={{padding: "5px", border: "black 1px solid"}}>Team Average Rank</ToggleButton>
-          <ToggleButton value="totrank" style={{padding: "5px", border: "black 1px solid"}}>Team Total Rank</ToggleButton>
+          <ToggleButton value="totalrating" style={{padding: "5px",border: "black 1px solid"}}>Team Total Ratings</ToggleButton>
+          <ToggleButton value="avgrank" style={{padding: "5px", border: "black 1px solid"}}>Team Ranks</ToggleButton>
         </ToggleButtonGroup>
         <div className={this.state.toggle !== "average" ? 'hidden' : ''}>
             <h3>Team Average Stats </h3>
@@ -149,38 +148,26 @@ class Rankings extends Component {
                 :<h3>nothing yet</h3>
             }   
         </div>
-        <div className={this.state.toggle !== "total" ? 'hidden' : ''}>
-            <h3>Totals Future Stats</h3>
+        <div className={this.state.toggle !== "totalrating" ? 'hidden' : ''}>
+            <h3>Team Category Ratings Totals</h3>
             {this.props.tot ?
                 <BootstrapTable 
                 striped
                 hover
                 keyField='team' 
-                data={ this.props.tot } 
-                columns={ this.state.columns }/>
+                data={ this.props.tr } 
+                columns={ this.state.rankcolumns }/>
                 :<h3>nothing yet</h3>
             }   
         </div>
         <div className={this.state.toggle !== "avgrank" ? 'hidden' : ''}>
-            <h3>Average Stats Rankings</h3>
+            <h3>Rankings</h3>
             {this.props.avgrank ?
                 <BootstrapTable 
                 striped
                 hover
                 keyField='team' 
                 data={ this.props.avgrank } 
-                columns={ this.state.rankcolumns }/>
-                :<h3>nothing yet</h3>
-            }
-        </div>
-        <div className={this.state.toggle !== "totrank" ? 'hidden' : ''}>
-            <h3>Total Stats Rankings</h3>
-            {this.props.totrank ?
-                <BootstrapTable 
-                striped
-                hover
-                keyField='team' 
-                data={ this.props.totrank } 
                 columns={ this.state.rankcolumns }/>
                 :<h3>nothing yet</h3>
             }
@@ -196,6 +183,7 @@ const mapStateToProps = state => {
     tot: state.comp.rankings.tot,
     avgrank: state.comp.rankings.rankavg,
     totrank: state.comp.rankings.ranktot,
+    tr: state.comp.rankings.teamrat
   };
 };
 
