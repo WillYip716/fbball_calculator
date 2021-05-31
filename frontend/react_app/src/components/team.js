@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { Form,Button} from "react-bootstrap";
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
+import RecPlayers from './recplayers';
 import ToggleButton from 'react-bootstrap/ToggleButton';
-import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css"
+import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 //import {Link} from 'react-router-dom';
 import { connect } from "react-redux";
 
@@ -376,7 +377,6 @@ class Team extends Component {
           tr.cat = "Total Team Rating"
 
           const ovr = [avg,rank,tr];
-
           this.setState({
               teamName: name,
               rosteredplayers: roster,
@@ -450,18 +450,7 @@ class Team extends Component {
       Object.keys(ranks).sort((a, b) => ranks[a] - ranks[b]).forEach((key, ind) =>
       {
          if(ind < num){
-           if(key === "FG_PCT"){
-              requiredObj.push("FG%");
-           }
-           else if(key === "FT_PCT"){
-              requiredObj.push("FT%");
-           }
-           else if(key === "FG3M"){
-            requiredObj.push("3PTM");
-         }
-           else{
-              requiredObj.push(key);
-           }
+            requiredObj.push(key);
          }
          else if(ranks[key] <= 6 ){
             requiredObj.push(key);
@@ -482,17 +471,55 @@ class Team extends Component {
       })
     }
     
+
     render() {
       return (
         <div className="container">
           <h2>{this.state.teamName}</h2>
+
+          
+            
+          <br/>
+          
+          
+
+          <h3>Team Summary</h3>
+          {this.state.overview ?
+            <BootstrapTable 
+            striped
+            hover
+            keyField='PTS' 
+            data={ this.state.overview } 
+            columns={ this.state.overcolumns }/>
+            :<h5>loading or no compiled data</h5>
+          }
+
+          <table className="table table-striped table-hover table-bordered">
+            <thead>
+              <tr>
+                <th>Suggested Stats to Focus on</th>
+                {this.state.focus.map((item,index) => (
+                  <th key={item}>{item}</th>
+                ))}
+              </tr>
+            </thead>
+          </table>
+          <br/>
+          
+
+          {this.state.focus ? 
+              <RecPlayers focus={this.state.focus} team={this.props.match.params.id}/>
+              :<div>loading</div>
+          }
+          
 
           <ToggleButtonGroup type="radio" name="options" defaultValue="avg" onChange={this.ptog.bind(this)}>
             <ToggleButton value="avg" style={{padding: "5px",border: "black 1px solid"}}>Averages</ToggleButton>
             <ToggleButton value="ratings" style={{padding: "5px", border: "black 1px solid"}}>Ratings</ToggleButton>
           </ToggleButtonGroup>
           <br/>
-            <div className={this.state.pos !== "ratings" ? 'hidden' : ''}>
+
+          <div className={this.state.pos !== "ratings" ? 'hidden' : ''}>
               <ToggleButtonGroup type="checkbox" onChange={this.statstog.bind(this)} >
                 <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="PTSrt">PTS</ToggleButton>
                 <ToggleButton style={{padding: "5px",border: "black 1px solid"}} value="FG_PCTrt">FG%</ToggleButton>
@@ -507,30 +534,7 @@ class Team extends Component {
               <Form onSubmit={this.filterInfo.bind(this)} role="form">
                 <Button type="submit">Filter</Button>
               </Form>
-            </div>
-          <br/>
-          <table className="table table-striped table-hover table-bordered">
-            <thead>
-              <tr>
-                <th>Suggested Stats to Focus on</th>
-                {this.state.focus.map((item,index) => (
-                  <th key={item}>{item}</th>
-                ))}
-              </tr>
-            </thead>
-          </table>
-          
-
-          <h3>Team Summary</h3>
-          {this.state.overview ?
-            <BootstrapTable 
-            striped
-            hover
-            keyField='PTS' 
-            data={ this.state.overview } 
-            columns={ this.state.overcolumns }/>
-            :<h5>loading or no compiled data</h5>
-          }
+          </div>
 
 
           <div className={this.state.pos !== "avg" ? 'hidden' : ''}>

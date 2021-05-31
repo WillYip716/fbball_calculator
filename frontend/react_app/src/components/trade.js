@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 //import axios from 'axios';
 import { Form,Button } from "react-bootstrap";
 import { connect } from "react-redux";
+import BootstrapTable from 'react-bootstrap-table-next';
+import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 
 class Trade extends Component {
   state = {
@@ -15,6 +17,93 @@ class Trade extends Component {
     up:{},
     traded:false,
     colorcode:{},
+    columns: [
+      {
+        dataField: 'Player_Name',
+        text: 'Name',
+        sort: true
+      },
+      {
+        dataField: 'PosStr',
+        text: 'Pos.',
+        sort: true
+      },
+      {
+        dataField: 'GP',
+        text: 'GP',
+        sort: true
+      },
+      {
+        dataField: 'TotalRating',
+        text: 'Rating',
+        sort: true
+      },
+      {
+        dataField: 'PTS',
+        text: 'PTS',
+        sort: true
+      },
+      {
+        dataField: 'FGM',
+        text: 'FGM',
+        sort: true
+      },
+      {
+        dataField: 'FGA',
+        text: 'FGA',
+        sort: true
+      },
+      {
+        dataField: 'FG_PCT',
+        text: 'FG%',
+        sort: true
+      }, 
+      {
+        dataField: 'FG3M',
+        text: '3PTM',
+        sort: true
+      },
+      {
+        dataField: 'FTM',
+        text: 'FTM',
+        sort: true
+      },
+      {
+        dataField: 'FTA',
+        text: 'FTA',
+        sort: true
+      },
+      {
+        dataField: 'FT_PCT',
+        text: 'FT%',
+        sort: true
+      },
+      {
+        dataField: 'REB',
+        text: 'REB',
+        sort: true
+      },
+      {
+        dataField: 'AST',
+        text: 'AST',
+        sort: true
+      },
+      {
+        dataField: 'STL',
+        text: 'STL',
+        sort: true
+      },
+      {
+        dataField: 'BLK',
+        text: 'BLK',
+        sort: true
+      },
+      {
+        dataField: 'TOV',
+        text: 'TOV',
+        sort: true
+      },
+    ],
   }
 
   componentDidMount() {
@@ -39,6 +128,7 @@ class Trade extends Component {
       lista:updatedlist,
       ateam: team[0]["teamName"],
       abox:"",
+      traded:false,
     })
 
     if(!this.state.listb.length){
@@ -61,6 +151,7 @@ class Trade extends Component {
       choiceb:added,
       listb:updatedlist,
       bbox:"",
+      traded:false,
     })
   }
 
@@ -165,7 +256,7 @@ class Trade extends Component {
 
   }
 
-  testtable(){
+  tradetable(){
     if(this.state.up){
       const teamavg = this.props.avg.filter(item => item.team === this.state.ateam)[0];
       return(
@@ -242,7 +333,7 @@ class Trade extends Component {
       )
     }
     else{
-      return(<div>test</div>)
+      return(<div>Not enough data</div>)
     }
 
   }
@@ -271,22 +362,49 @@ class Trade extends Component {
     return (
       <div className="container">
         <div style={{display:"flex",marginBottom:"2rem"}}>
-        {this.state.choicea.length && this.state.choiceb.length?
+        {this.state.choicea.length && this.state.choiceb.length && !this.state.traded?
           <button className="btn btn-primary" style={{margin:"auto",fontSize:"2rem"}} onClick={() => this.tradeClick()}>Trade</button>
           :<h1 style={{margin:"auto"}}>Trade</h1>
         }
-        {this.state.traded?
+        {this.state.choicea.length || this.state.choiceb.length?
           <button className="btn btn-primary" style={{margin:"auto",fontSize:"2rem"}} onClick={() => this.resetClick()}>Reset</button>
           :<div/>
         }
         </div>
         
         {this.state.traded?
-          this.testtable()
+          this.tradetable()
           :<div></div>
         }
+
+
+        {this.state.choicea.length?
+            <div>
+              <h6 >Trading away: <strong style={{color:"red"}}>{[...this.state.choicea].join(",")}</strong></h6>
+              <BootstrapTable 
+              striped
+              hover
+              keyField='id' 
+              data={ this.props.aratings.filter(item => this.state.choicea.includes(item.Player_Name)) } 
+              columns={ this.state.columns }/>
+            </div>
+            :<div/>
+        }
+
+        {this.state.choiceb.length?
+            <div>
+              <h6 >Trading For: <strong style={{color:"green"}}>{[...this.state.choiceb].join(",")}</strong></h6>
+              <BootstrapTable 
+              striped
+              hover
+              keyField='id' 
+              data={ this.props.aratings.filter(item => this.state.choiceb.includes(item.Player_Name)) } 
+              columns={ this.state.columns }/>
+            </div>
+            :<div/>
+        }
+
         <div className="tradeform">
-            <h6 >Trading away: <strong style={{color:"red"}}>{[...this.state.choicea].join(",")}</strong></h6>
             <Form onSubmit={this.addlista.bind(this)} role="form">
                 <Form.Group controlId="exampleForm.SelectCustom">
                   <Form.Label>Step 1: Select a rostered player</Form.Label>
@@ -303,8 +421,7 @@ class Trade extends Component {
                 <Button type="submit">Add Player</Button>
             </Form>
         </div>
-        <div className="tradeform">
-            <h6 >Trading For: <strong style={{color:"green"}}>{[...this.state.choiceb].join(",")}</strong></h6>
+        <div className="tradeform"> 
             <Form onSubmit={this.addlistb.bind(this)} role="form">
                 <Form.Group controlId="exampleForm.SelectCustom">
                   <Form.Label>Step 2: Select a player to trade for</Form.Label>
