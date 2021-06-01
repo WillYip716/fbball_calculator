@@ -494,18 +494,6 @@ class Team extends Component {
             :<h5>loading or no compiled data</h5>
           }
 
-          <table className="table table-striped table-hover table-bordered">
-            <thead>
-              <tr>
-                <th>Suggested Stats to Focus on</th>
-                {this.state.focus.map((item,index) => (
-                  <th key={item}>{item}</th>
-                ))}
-              </tr>
-            </thead>
-          </table>
-          <br/>
-          
 
           {this.state.focus ? 
               <RecPlayers focus={this.state.focus} team={this.props.match.params.id}/>
