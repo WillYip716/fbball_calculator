@@ -25,6 +25,7 @@ function RecPlayers(props){
           return cat;
       }
     })
+    const rtavr = useSelector(state => state.comp.ratings.artavr)
     //console.log(fpres)
     //console.log(rp)
     const columns = [
@@ -217,6 +218,20 @@ function RecPlayers(props){
         sort: true
       },
       {
+        dataField: 'fr',
+        text: 'Focus Rating',
+        sort: true,
+        formatter: (cell, row) => {
+          return (    
+            <div>
+              <span key={row.Player_Name} style={{fontWeight:"bold" }}>
+                  {cell}
+              </span>
+            </div>
+          )
+        }
+      },
+      {
         dataField: 'PTSrt',
         text: 'PTS',
         sort: true,
@@ -349,53 +364,60 @@ function RecPlayers(props){
     }
 
     const aob = (v,c) => {
-        if(c==="FG_PCT" || c==="FT_PCT"){
-           if(v < -.5){
-              return "darkred";
-           }
-           else if(v >= -.5 && v < 0){
-              return "red";
-           }
-           else if(v < .5 && v >= 0){
-              return "olive";
-           }
-           else if(v >= .5){
-            return "darkgreen";
-           }
-        }
-        else{
-          if(v < -3){
-              return "darkred";
-          }
-          else if(v >= -3 && v < 0){
-              return "red";
-          }
-          else if(v < 3 && v >= 0){
-              return "olive";
-          }
-          else if(v >= 3){
-            return "darkgreen";
-          }
-        }
+      if(v <= rtavr[c] * -2){
+        return "darkred";
+      }
+      else if(v <= rtavr[c] * -1){
+        return "red";
+      }
+      else if(v < 0){
+        return "tomato";
+      }
+      else if(v >= rtavr[c] * 2){
+        return "darkgreen";
+      }
+      else if(v >= rtavr[c]){
+        return "olive";
+      }
+      else if(v >= 0){
+        return "lime";
+      }
     } 
     
     const fits = rp.reduce((p, c) => {
-        let ft = focus.reduce((prev, cur) => {if(c[cur+"rt"]>2){prev.push(cur);return prev}return prev},[]);
-        c.focused = ft;
-        if(ft.length > 3){
+        let ft = focus.reduce((prev, cur) => {prev.fr = prev.fr + c[cur+"rt"];if(c[cur+"rt"]>0){prev.m.push(cur);return prev}return prev},{m:[],fr:0});
+        c.focused = ft.m;
+        c.fr = Math.round(ft.fr *100)/100;
+        if(ft.m.length === focus.length ){
+            p.perfect.push(c);
+            return p;
+        }
+        else if((ft.m.length >= 4) && ft.fr > 0){
             p.great.push(c);
             return p;
         }
-        else if((ft.length > 1) && (ft.length<=3)){
+        else if((ft.m.length > 1) && ft.fr > 0){
             p.good.push(c);
             return p;
         }
-        else if(ft.length === 1 && (c[ft[0] + "rt"] > 7)){
+        else if(ft.m.length === 1 && (c[ft.m[0] + "rt"] > rtavr[ft.m[0]] * 2) && ft.fr > 0){
             p.specialist.push(c);
             return p;
         }
+        /*if(ft.fr > 30){
+          p.great.push(c);
+          return p;
+        }
+        else if(ft.fr > 20){
+            p.good.push(c);
+            return p;
+        }
+        else if(ft.fr > 10){
+            p.specialist.push(c);
+            return p;
+        }*/
         return p;
-    }, {great:[],good:[],specialist:[]});
+    }, {perfect:[],great:[],good:[],specialist:[]});
 
 
     
@@ -416,14 +438,29 @@ function RecPlayers(props){
         
         <h3>Players to target</h3>
         <ToggleButtonGroup type="radio" name="options" defaultValue="hide" onChange={handleChange}>
+          <ToggleButton value="perfect" style={{padding: "5px",border: "black 1px solid"}}>Perfect</ToggleButton>
           <ToggleButton value="great" style={{padding: "5px",border: "black 1px solid"}}>Great</ToggleButton>
           <ToggleButton value="good" style={{padding: "5px", border: "black 1px solid"}}>Good</ToggleButton>
           <ToggleButton value="specialist" style={{padding: "5px", border: "black 1px solid"}}>Specialist</ToggleButton>
           <ToggleButton value="hide" style={{padding: "5px", border: "black 1px solid"}}>Hide</ToggleButton>
         </ToggleButtonGroup>
+
+
+        <div className={view !== "perfect" ? 'hidden' : ''}>
+            {fits.perfect.length ?
+              <BootstrapTable 
+              striped
+              hover
+              keyField='id' 
+              data={ fits.perfect } 
+              columns={ rtcolumns }
+              pagination={ paginationFactory() }/>
+              :<h5>No players are perfect fits</h5>
+            }
+        </div>
         
         <div className={view !== "great" ? 'hidden' : ''}>
-            {fits.great ?
+            {fits.great.length ?
               <BootstrapTable 
               striped
               hover
@@ -436,7 +473,7 @@ function RecPlayers(props){
         </div>
 
         <div className={view !== "good" ? 'hidden' : ''}>
-            {fits.great ?
+            {fits.good.length ?
               <BootstrapTable 
               striped
               hover
@@ -449,7 +486,7 @@ function RecPlayers(props){
         </div>
 
         <div className={view !== "specialist" ? 'hidden' : ''}>
-            {fits.great ?
+            {fits.specialist.length ?
               <BootstrapTable 
               striped
               hover

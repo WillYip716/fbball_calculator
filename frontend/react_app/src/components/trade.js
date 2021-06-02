@@ -108,8 +108,10 @@ class Trade extends Component {
 
   componentDidMount() {
     if(this.props.teams&&this.props.aratings){
-      const r = this.props.teams.reduce((a, c) => a.concat(c["players"]),[])    
+      const r = this.props.teams.reduce((a, c) => a.concat(c["players"]),[]) 
       const rostered = this.props.aratings.filter(item => r.includes(item.Player_Name)).sort((a,b) => (a.Player_Name < b.Player_Name) ? -1 : ((b.Player_Name < a.Player_Name) ? 1 : 0));
+      
+      
       this.setState({
         lista:rostered,
       })

@@ -36,11 +36,27 @@ def compile(request):
     c = c.sort_values(by=['TotalRating'],ascending=False)
     a = a.sort_values(by=['TotalRating'],ascending=False)
 
+
+    rtavr = a[a.Player_Name.isin(allarr)][["FG_PCTrt","FG3Mrt","FT_PCTrt","REBrt","ASTrt","STLrt","BLKrt","TOVrt","PTSrt"]]
+    rtavr = rtavr[rtavr>0].sum()
+    rtavr = (rtavr/len(allarr)).round(2)
+
     ratings = {
         "guards": g.to_dict('records'),
         "forwards": f.to_dict('records'),
         "centers": c.to_dict('records'),
         "all": a.to_dict('records'),
+        "artavr":{
+            "FG_PCT": rtavr.FG_PCTrt,
+            "FT_PCT": rtavr.FT_PCTrt,
+            "FG3M": rtavr.FG3Mrt,
+            "REB": rtavr.REBrt ,
+            "AST": rtavr.ASTrt ,
+            "STL": rtavr.STLrt ,
+            "BLK": rtavr.BLKrt ,
+            "TOV": rtavr.TOVrt ,
+            "PTS": rtavr.PTSrt ,
+        },
     }
 
     rankings = rankingsHelper(data)
@@ -70,14 +86,14 @@ def compile(request):
 
     rankings['teamrat'] = ratingstotals
 
-    data = {
+    dataout = {
         "ratings": ratings,
         "avr": avrF.to_dict("records"),
         "rankings": rankings,
         "teams":data
     }
 
-    dump = json.dumps(data)
+    dump = json.dumps(dataout)
     #print(data)
     return HttpResponse(dump, content_type='application/json')
     #return HttpResponse(status=200)
