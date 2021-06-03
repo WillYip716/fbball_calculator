@@ -495,11 +495,12 @@ class Team extends Component {
           }
 
 
-          {this.state.focus ? 
+          {this.state.focus.length ? 
               <RecPlayers focus={this.state.focus} team={this.props.match.params.id}/>
               :<div>loading</div>
           }
           
+          <h3 style={{borderTop:"1px black solid"}}>Roster</h3>
 
           <ToggleButtonGroup type="radio" name="options" defaultValue="avg" onChange={this.ptog.bind(this)}>
             <ToggleButton value="avg" style={{padding: "5px",border: "black 1px solid"}}>Averages</ToggleButton>
@@ -526,7 +527,6 @@ class Team extends Component {
 
 
           <div className={this.state.pos !== "avg" ? 'hidden' : ''}>
-            <h3>Averages</h3>
             {this.state.rosteredplayers ?
               <BootstrapTable 
               striped
@@ -539,7 +539,6 @@ class Team extends Component {
           </div>
 
           <div className={this.state.pos !== "ratings" ? 'hidden' : ''}>
-            <h3>Ratings</h3>
             {this.state.rosteredplayers ?
               <BootstrapTable 
               striped

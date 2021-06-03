@@ -120,41 +120,44 @@ class Trade extends Component {
 
   addlista(event){
     event.preventDefault();
-    const team = this.props.teams.filter(item => item["players"].includes(this.state.abox));
-    const added = this.state.choicea.concat(this.state.abox);
-    const filterlist = team[0]["players"].filter(item => !added.includes(item));
-    const updatedlist = this.props.aratings.filter(item => filterlist.includes(item.Player_Name)).sort((a,b) => (a.Player_Name < b.Player_Name) ? -1 : ((b.Player_Name < a.Player_Name) ? 1 : 0));
-
-    this.setState({
-      choicea:added,
-      lista:updatedlist,
-      ateam: team[0]["teamName"],
-      abox:"",
-      traded:false,
-    })
-
-    if(!this.state.listb.length){
-      const addedb = this.state.choiceb.concat(team[0]["players"]);
-      const updatedlistb = this.props.aratings.filter(item => !addedb.includes(item.Player_Name)).sort((a,b) => (a.Player_Name < b.Player_Name) ? -1 : ((b.Player_Name < a.Player_Name) ? 1 : 0));
-      this.setState({
-        listb:updatedlistb,
-      })
-    }
+    if(this.state.abox){
+        const team = this.props.teams.filter(item => item["players"].includes(this.state.abox));
+        const added = this.state.choicea.concat(this.state.abox);
+        const filterlist = team[0]["players"].filter(item => !added.includes(item));
+        const updatedlist = this.props.aratings.filter(item => filterlist.includes(item.Player_Name)).sort((a,b) => (a.Player_Name < b.Player_Name) ? -1 : ((b.Player_Name < a.Player_Name) ? 1 : 0));
     
+        this.setState({
+          choicea:added,
+          lista:updatedlist,
+          ateam: team[0]["teamName"],
+          abox:"",
+          traded:false,
+        })
+    
+        if(!this.state.listb.length){
+          const addedb = this.state.choiceb.concat(team[0]["players"]);
+          const updatedlistb = this.props.aratings.filter(item => !addedb.includes(item.Player_Name)).sort((a,b) => (a.Player_Name < b.Player_Name) ? -1 : ((b.Player_Name < a.Player_Name) ? 1 : 0));
+          this.setState({
+            listb:updatedlistb,
+          })
+        }
+    }
   }
 
   addlistb(event){
     event.preventDefault();
-    const added = this.state.choiceb.concat(this.state.bbox);
-    const updatedlist = this.state.listb.filter(item => !added.includes(item.Player_Name)).sort((a,b) => (a.Player_Name < b.Player_Name) ? -1 : ((b.Player_Name < a.Player_Name) ? 1 : 0));
+    if(this.state.bbox){
+        const added = this.state.choiceb.concat(this.state.bbox);
+        const updatedlist = this.state.listb.filter(item => !added.includes(item.Player_Name)).sort((a,b) => (a.Player_Name < b.Player_Name) ? -1 : ((b.Player_Name < a.Player_Name) ? 1 : 0));
 
 
-    this.setState({
-      choiceb:added,
-      listb:updatedlist,
-      bbox:"",
-      traded:false,
-    })
+        this.setState({
+          choiceb:added,
+          listb:updatedlist,
+          bbox:"",
+          traded:false,
+        })
+    }
   }
 
   changelista(event){
@@ -276,6 +279,7 @@ class Trade extends Component {
               </tr>
             </thead>
           </table>
+          <h5 style={{textAlign:"center",fontWeight:"bold"}}>Trade Result</h5>
           <table className="table table-striped table-hover table-bordered">
             <thead>
               <tr>

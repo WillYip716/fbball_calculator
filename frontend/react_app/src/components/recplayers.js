@@ -9,10 +9,13 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 function RecPlayers(props){
     
 
-    const [view, setView] = useState("hide");
+    const [view, setView] = useState("perfect");
+    const [show, setShow] = useState("");
+    const [roa, setRoa] = useState("");
     const focus = props.focus
     const rostered = useSelector(state => state.comp.teams)[parseInt(props.team)].players;
     const rp = useSelector(state => state.comp.ratings.all).filter((item => !rostered.includes(item.Player_Name)))
+    const teamroster = useSelector(state => state.comp.ratings.all).filter((item => rostered.includes(item.Player_Name)))
     const fpres = focus.map((cat) => {
       switch(cat) {
         case 'FG_PCT':
@@ -48,6 +51,20 @@ function RecPlayers(props){
           dataField: 'TotalRating',
           text: 'Rating',
           sort: true
+        },
+        {
+          dataField: 'fr',
+          text: 'Focus Rating',
+          sort: true,
+          formatter: (cell, row) => {
+            return (    
+              <div>
+                <span key={row.Player_Name} style={{fontWeight:"bold" }}>
+                    {cell}
+                </span>
+              </div>
+            )
+          }
         },
         {
           dataField: 'PTS',
@@ -363,6 +380,14 @@ function RecPlayers(props){
         setView(event)
     }
 
+    const showadvanced = (event) => {    
+        setShow(event)
+    }
+
+    const toggleroa = (event) => {    
+        setRoa(event)
+    }
+
     const aob = (v,c) => {
       if(v <= rtavr[c] * -2){
         return "darkred";
@@ -404,99 +429,140 @@ function RecPlayers(props){
             p.specialist.push(c);
             return p;
         }
-        /*if(ft.fr > 30){
-          p.great.push(c);
-          return p;
-        }
-        else if(ft.fr > 20){
-            p.good.push(c);
-            return p;
-        }
-        else if(ft.fr > 10){
-            p.specialist.push(c);
-            return p;
-        }*/
         return p;
     }, {perfect:[],great:[],good:[],specialist:[]});
+
+    const nonfits = teamroster.reduce((p, c) => {
+        let ft = focus.reduce((prev, cur) => {prev.fr = prev.fr + c[cur+"rt"];if(c[cur+"rt"]>0){prev.m.push(cur);return prev}return prev},{m:[],fr:0});
+        c.focused = ft.m;
+        c.fr = Math.round(ft.fr *100)/100;
+        if(ft.m.length < 2 || ft.fr < 0 ){
+            p.push(c);
+            return p;
+        }
+        return p;
+    }, []);
 
 
     
 
     return (
-      <div>
-        <table className="table table-striped table-hover table-bordered">
-          <thead>
-            <tr>
-              <th>Suggested Stats to Focus on</th>
-              {fpres.map((item,index) => (
-                <th key={item}>{item}</th>
-              ))}
-            </tr>
-          </thead>
-        </table>
-        <br/>
-        
-        <h3>Players to target</h3>
-        <ToggleButtonGroup type="radio" name="options" defaultValue="hide" onChange={handleChange}>
-          <ToggleButton value="perfect" style={{padding: "5px",border: "black 1px solid"}}>Perfect</ToggleButton>
-          <ToggleButton value="great" style={{padding: "5px",border: "black 1px solid"}}>Great</ToggleButton>
-          <ToggleButton value="good" style={{padding: "5px", border: "black 1px solid"}}>Good</ToggleButton>
-          <ToggleButton value="specialist" style={{padding: "5px", border: "black 1px solid"}}>Specialist</ToggleButton>
-          <ToggleButton value="hide" style={{padding: "5px", border: "black 1px solid"}}>Hide</ToggleButton>
-        </ToggleButtonGroup>
-
-
-        <div className={view !== "perfect" ? 'hidden' : ''}>
-            {fits.perfect.length ?
-              <BootstrapTable 
-              striped
-              hover
-              keyField='id' 
-              data={ fits.perfect } 
-              columns={ rtcolumns }
-              pagination={ paginationFactory() }/>
-              :<h5>No players are perfect fits</h5>
-            }
+      <div style={{borderTop:"1px black solid", paddingTop: "1rem"}}>
+        <div>
+            <h3 style={{display: "inline-block"}}>Advanced Analysis</h3>
+            <ToggleButtonGroup style={{marginBottom:".5rem"}} type="radio" name="options" defaultValue="" onChange={showadvanced}>
+              <ToggleButton value={show?"":"show"} style={{padding: "5px",border: "black 1px solid",marginLeft:"2rem"}}>{show?"Hide":"Show"}</ToggleButton>
+            </ToggleButtonGroup>
         </div>
         
-        <div className={view !== "great" ? 'hidden' : ''}>
-            {fits.great.length ?
-              <BootstrapTable 
-              striped
-              hover
-              keyField='id' 
-              data={ fits.great } 
-              columns={ rtcolumns }
-              pagination={ paginationFactory() }/>
-              :<h5>No players are great fits</h5>
-            }
-        </div>
+        <div className={show ? '' : 'hidden'}>
 
-        <div className={view !== "good" ? 'hidden' : ''}>
-            {fits.good.length ?
-              <BootstrapTable 
-              striped
-              hover
-              keyField='id' 
-              data={ fits.good } 
-              columns={ rtcolumns }
-              pagination={ paginationFactory() }/>
-              :<h5>No players are good fits</h5>
-            }
-        </div>
+            <table className="table table-striped table-hover table-bordered" style={{marginBottom:"0rem"}}>
+              <thead>
+                <tr>
+                  <th>Suggested Stats to Focus on</th>
+                  {fpres.map((item,index) => (
+                    <th key={item}>{item}</th>
+                  ))}
+                </tr>
+              </thead>
+            </table>
+            <br/>
+            
+            <h3>Players to target</h3>
+            <div>
+                <ToggleButtonGroup type="radio" name="options" defaultValue="perfect" onChange={handleChange}>
+                  <ToggleButton value="perfect" style={{padding: "5px",border: "black 1px solid"}}>Perfect</ToggleButton>
+                  <ToggleButton value="great" style={{padding: "5px",border: "black 1px solid"}}>Great</ToggleButton>
+                  <ToggleButton value="good" style={{padding: "5px", border: "black 1px solid"}}>Good</ToggleButton>
+                  <ToggleButton value="specialist" style={{padding: "5px", border: "black 1px solid"}}>Specialist</ToggleButton>
+                </ToggleButtonGroup>
+                
+                <ToggleButtonGroup type="radio" name="options" defaultValue="" onChange={toggleroa}>
+                  <ToggleButton value={roa?"":"ratings"} style={{padding: "5px",border: "black 1px solid",marginLeft:"2rem"}}>{roa?"Ratings":"Avg"}</ToggleButton>
+                </ToggleButtonGroup>
+            </div>
+            
+            
+            <table className="table table-striped table-hover table-bordered">
+              <thead>
+                <tr>
+                  <th style={{color:"darkred"}}>Significantly Below Average</th>
+                  <th style={{color:"red"}}>Moderately Below Average</th>
+                  <th style={{color:"tomato"}}>Slightly Below Average</th>
+                  <th style={{color:"lime"}}>Slightly Above Average</th>
+                  <th style={{color:"olive"}}>Moderately Above Average</th>
+                  <th style={{color:"darkgreen"}}>Significantly Above Average</th>
+                </tr>
+              </thead>
+            </table>
 
-        <div className={view !== "specialist" ? 'hidden' : ''}>
-            {fits.specialist.length ?
-              <BootstrapTable 
-              striped
-              hover
-              keyField='id' 
-              data={ fits.specialist } 
-              columns={ rtcolumns }
-              pagination={ paginationFactory() }/>
-              :<h5>No players are specialist fits</h5>
-            }
+            <div className={view !== "perfect" ? 'hidden' : ''}>
+                {fits.perfect.length ?
+                  <BootstrapTable 
+                  striped
+                  hover
+                  keyField='id' 
+                  data={ fits.perfect } 
+                  columns={ roa ? rtcolumns : columns}
+                  pagination={ paginationFactory() }/>
+                  :<h5>No players are a match for perfect fits</h5>
+                }
+            </div>
+            
+            <div className={view !== "great" ? 'hidden' : ''}>
+                {fits.great.length ?
+                  <BootstrapTable 
+                  striped
+                  hover
+                  keyField='id' 
+                  data={ fits.great } 
+                  columns={ roa ? rtcolumns : columns }
+                  pagination={ paginationFactory() }/>
+                  :<h5>No players are a match for great fits</h5>
+                }
+            </div>
+
+            <div className={view !== "good" ? 'hidden' : ''}>
+                {fits.good.length ?
+                  <BootstrapTable 
+                  striped
+                  hover
+                  keyField='id' 
+                  data={ fits.good } 
+                  columns={ roa ? rtcolumns : columns }
+                  pagination={ paginationFactory() }/>
+                  :<h5>No players are a match for good fits</h5>
+                }
+            </div>
+
+            <div className={view !== "specialist" ? 'hidden' : ''}>
+                {fits.specialist.length ?
+                  <BootstrapTable 
+                  striped
+                  hover
+                  keyField='id' 
+                  data={ fits.specialist } 
+                  columns={ roa ? rtcolumns : columns }
+                  pagination={ paginationFactory() }/>
+                  :<h5>No players are a match for specialist fits</h5>
+                }
+            </div>
+            
+            <h3>Players to trade away</h3>
+            <div>
+                {nonfits.length ?
+                  <BootstrapTable 
+                  striped
+                  hover
+                  keyField='id' 
+                  data={ nonfits } 
+                  columns={ roa ? rtcolumns : columns }/>
+                  :<h5>No Matches</h5>
+                }
+            </div>
         </div>
+        
       </div>
       
     );
