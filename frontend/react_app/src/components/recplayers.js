@@ -479,7 +479,7 @@ function RecPlayers(props){
                 </ToggleButtonGroup>
                 
                 <ToggleButtonGroup type="radio" name="options" defaultValue="" onChange={toggleroa}>
-                  <ToggleButton value={roa?"":"ratings"} style={{padding: "5px",border: "black 1px solid",marginLeft:"2rem"}}>{roa?"Ratings":"Avg"}</ToggleButton>
+                  <ToggleButton value={roa?"":"ratings"} style={{padding: "5px",border: "black 1px solid",marginLeft:"2rem"}}>{roa?"Toggle: Ratings":"Toggle: Avg"}</ToggleButton>
                 </ToggleButtonGroup>
             </div>
             
