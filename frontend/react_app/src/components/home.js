@@ -481,7 +481,7 @@ class Home extends Component {
                 }
             </div>
           </div>
-          :<h3>no data yet</h3>
+          :<div/>
         }
       </div>
     );

@@ -52,9 +52,9 @@ footer{
 
 .info{
     font-size: 24px;
-    border-color: white !important;
-    color: gray !important;
-    background-color: white !important;
+    color: white !important;
+    border-color: #343a40 !important;
+    background-color: #343a40 !important;
 }
 
 .dropdown-item{
@@ -70,4 +70,8 @@ footer{
 .tradeform{
     display: inline-block;
     width: 50%;
+}
+
+a:hover {
+    text-decoration: none;
 }
