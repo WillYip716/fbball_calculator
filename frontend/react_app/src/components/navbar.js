@@ -21,7 +21,7 @@ function NavbarComp(){
             case 'compile':
                 return 'Head over to the rosters page under the "league" drop down in your league. Simply copy all the content (ctrl + a => ctrl + c) and paste into the box below';
             case 'trade':
-                return "Pick a rostered player on the left panel. The site will grab the team of the player that's rostered to so that you can add more players to trade away. The right panel will be populated with all the remaining players from the FA pool and other rosters. Click the Trade button to finalize at least one player is added to each panel. The color coding denotes an estimate on how how much your stats will increase or decrease relative to other teams based on the trade.";
+                return "Pick a rostered player on the left panel. The site will grab the team of the player that's rostered to so that you can add more players to trade away. The right panel will be populated with all the remaining players from the FA pool and other rosters. Click the Trade button to finalize the transaction once at least one player is added to each panel. The color coding denotes an estimate on how much your stats will increase or decrease relative to other teams based on the trade.";
             case 'rankings':
                 return '"Team Average" tab shows the combined per game average of the roster.\n"Team Total Ratings" is the combined ratings for the roster.\n"Team Ranks" is the teams stats ranking relative to other teams in the league where 1 is the best and 12 is the worst in a particular category. The total for "Team Ranks" is just the total of all the ranks which basically means the lower the number the better the team is overall.';
             case 'rosters':

@@ -6,6 +6,8 @@ import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import { Button, Form } from "react-bootstrap";
 import { connect } from "react-redux";
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
+import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
 
 
 class Home extends Component {
@@ -22,7 +24,8 @@ class Home extends Component {
       {
         dataField: 'Player_Name',
         text: 'Name',
-        sort: true
+        sort: true,
+        filter: textFilter()
       },
       {
         dataField: 'PosStr',
@@ -37,7 +40,7 @@ class Home extends Component {
       {
         dataField: 'TotalRating',
         text: 'Rating',
-        sort: true
+        sort: true,
       },
       {
         dataField: 'PTS',
@@ -109,7 +112,8 @@ class Home extends Component {
       {
         dataField: 'Player_Name',
         text: 'Name',
-        sort: true
+        sort: true,
+        filter: textFilter()
       },
       {
         dataField: 'PosStr',
@@ -185,7 +189,8 @@ class Home extends Component {
       {
         dataField: 'Player_Name',
         text: 'Name',
-        sort: true
+        sort: true,
+        filter: textFilter()
       },
       {
         dataField: 'PosStr',
@@ -395,6 +400,7 @@ class Home extends Component {
             data={ this.state.all } 
             columns={ this.state.columnsavg }
             pagination={ paginationFactory() }
+            filter={ filterFactory() }
             />
           </div> 
           :<div/>
@@ -437,7 +443,9 @@ class Home extends Component {
                   keyField='id' 
                   data={ this.state.all } 
                   columns={ this.state.columns }
-                  pagination={ paginationFactory() }/>
+                  pagination={ paginationFactory() }
+                  filter={ filterFactory() }
+                  />
                   :<h5>loading or no compiled data</h5>
                 }
             </div>
@@ -450,7 +458,9 @@ class Home extends Component {
                   keyField='id' 
                   data={ this.state.guards } 
                   columns={ this.state.columns }
-                  pagination={ paginationFactory() }/>
+                  pagination={ paginationFactory() }
+                  filter={ filterFactory() }
+                  />
                   :<h5>loading or no compiled data</h5>
                 }
             </div>
@@ -463,7 +473,8 @@ class Home extends Component {
                   keyField='id' 
                   data={ this.state.forwards } 
                   columns={ this.state.columns }
-                  pagination={ paginationFactory() }/>
+                  pagination={ paginationFactory() }
+                  filter={ filterFactory() }/>
                   :<h5>loading or no compiled data</h5>
                 }
             </div>
@@ -476,7 +487,9 @@ class Home extends Component {
                   keyField='id' 
                   data={ this.state.centers } 
                   columns={ this.state.columns }
-                  pagination={ paginationFactory() }/>
+                  pagination={ paginationFactory() }
+                  filter={ filterFactory() }
+                  />
                   :<h5>loading or no compiled data</h5>
                 }
             </div>

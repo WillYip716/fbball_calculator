@@ -6,7 +6,7 @@ function Footer(){
     
     return(
         <footer>
-            Fantasy Calculator
+            Fantasy Basketball Calculator
         </footer>
     )
 }
