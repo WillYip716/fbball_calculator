@@ -22,3 +22,6 @@ class AvrCompSerializer(serializers.ModelSerializer):
         model = AvrComp
         fields = '__all__'
 
+class LeagueSerializer(serializers.Serializer):
+    teamName = serializers.CharField(required=True)
+    players = serializers.ListField(child=serializers.CharField(),required=True)

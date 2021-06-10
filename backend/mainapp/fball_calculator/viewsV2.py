@@ -1,15 +1,22 @@
 import pandas as pd
 import numpy as np
 import json
+from .validator import validate_api
 from rest_framework.decorators import api_view
 from rest_framework import serializers, viewsets, status
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from fball_calculator.models import Player,Team,Positions, AvrComp
 
 
 
 @api_view(['POST'])
 def compile(request):
+    validation = validate_api(request)
+    res = {}
+    if not validation["success"]:
+        res["errors"] = validation["errors"]
+        return HttpResponse(res, status=400)
+
     data = json.loads(request.body)["teams"]
     #print(data)
     allarr = []
