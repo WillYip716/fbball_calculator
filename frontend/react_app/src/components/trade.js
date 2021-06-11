@@ -4,6 +4,8 @@ import { Form,Button } from "react-bootstrap";
 import { connect } from "react-redux";
 import BootstrapTable from 'react-bootstrap-table-next';
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
+import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
+import ToggleButton from 'react-bootstrap/ToggleButton';
 
 class Trade extends Component {
   state = {
@@ -15,6 +17,8 @@ class Trade extends Component {
     listb:[],
     choiceb:[],
     up:{},
+    upr:{},
+    tar:"",
     traded:false,
     colorcode:{},
     columns: [
@@ -104,6 +108,73 @@ class Trade extends Component {
         sort: true
       },
     ],
+    columnsrt: [
+      {
+        dataField: 'Player_Name',
+        text: 'Name',
+        sort: true
+      },
+      {
+        dataField: 'PosStr',
+        text: 'Pos.',
+        sort: true
+      },
+      {
+        dataField: 'GP',
+        text: 'GP',
+        sort: true
+      },
+      {
+        dataField: 'TotalRating',
+        text: 'Rating',
+        sort: true
+      },
+      {
+        dataField: 'PTSrt',
+        text: 'PTS',
+        sort: true
+      },
+      {
+        dataField: 'FG_PCTrt',
+        text: 'FG%',
+        sort: true
+      }, 
+      {
+        dataField: 'FG3Mrt',
+        text: '3PTM',
+        sort: true
+      },
+      {
+        dataField: 'FT_PCTrt',
+        text: 'FT%',
+        sort: true
+      },
+      {
+        dataField: 'REBrt',
+        text: 'REB',
+        sort: true
+      },
+      {
+        dataField: 'ASTrt',
+        text: 'AST',
+        sort: true
+      },
+      {
+        dataField: 'STLrt',
+        text: 'STL',
+        sort: true
+      },
+      {
+        dataField: 'BLKrt',
+        text: 'BLK',
+        sort: true
+      },
+      {
+        dataField: 'TOVrt',
+        text: 'TOV',
+        sort: true
+      },
+    ],
   }
 
   componentDidMount() {
@@ -171,6 +242,12 @@ class Trade extends Component {
       bbox: event.target.value,
     })
   }
+
+  togglear(val){
+    this.setState({
+      tar: val,
+    })
+  }
   
   tradeClick(){
     
@@ -225,7 +302,7 @@ class Trade extends Component {
       }},{PTS:0,FGM:0,FGA:0,FG3M:0,FTM:0,FTA:0,REB:0,AST:0,STL:0,BLK:0,TOV:0,PTSrt:0,FG_PCTrt:0,FG3Mrt:0,FT_PCTrt:0,REBrt:0,ASTrt:0,STLrt:0,BLKrt:0,TOVrt:0});
     
 
-    const tot = Object.keys(tradefor).slice(0,11).reduce((p, c) => {
+    const tot = Object.keys(tradefor).reduce((p, c) => {
         p[c] = Math.round((tradefor[c] - tradeaway[c])*100)/100;
         return p;
     }, {});
@@ -235,17 +312,20 @@ class Trade extends Component {
 
 
     const teamavg = this.props.avg.filter(item => item.team === this.state.ateam)[0];
-    //const teamranks = this.props.tr.filter(item => item.team === this.state.ateam)[0];
+    const teamranks = this.props.tr.filter(item => item.team === this.state.ateam)[0];
 
-    const updatedavg = Object.keys(tot).reduce((p, c) => {
+    const updatedavg = Object.keys(tot).slice(0,11).reduce((p, c) => {
       p[c] = Math.round((parseFloat(teamavg[c]) + tot[c])*100)/100;
       return p;
     }, {});
 
-    const updatedtr= Object.keys(tot).reduce((p, c) => {
-      p[c] = Math.round((parseFloat(teamavg[c]) + tot[c])*100)/100;
+    const updatedtr = Object.keys(tot).slice(11).reduce((p, c) => {
+      p[c] = Math.round((parseFloat(teamranks[c.slice(0,-2)]) + tot[c])*100)/100;
       return p;
     }, {});
+
+    console.log(updatedavg)
+    console.log(updatedtr)
 
     updatedavg.FG_PCT = Math.round((updatedavg.FGM/updatedavg.FGA)*1000)/1000;
     updatedavg.FT_PCT = Math.round((updatedavg.FTM/updatedavg.FTA)*1000)/1000;
@@ -282,6 +362,7 @@ class Trade extends Component {
 
     this.setState({
       up: updatedavg,
+      upr: updatedtr,
       traded:true,
       colorcode:colorcoded,
     })
@@ -291,6 +372,7 @@ class Trade extends Component {
   tradetable(){
     if(this.state.up){
       const teamavg = this.props.avg.filter(item => item.team === this.state.ateam)[0];
+      const teamrat = this.props.tr.filter(item => item.team === this.state.ateam)[0];
       return(
         <div>
           <table className="table table-striped table-hover table-bordered">
@@ -307,60 +389,105 @@ class Trade extends Component {
             </thead>
           </table>
           <h5 style={{textAlign:"center",fontWeight:"bold"}}>Trade Result</h5>
-          <table className="table table-striped table-hover table-bordered">
-            <thead>
-              <tr>
-                <th>{this.state.ateam}</th>
-                <th>PTS</th>
-                <th>FGM</th>
-                <th>FGA</th>
-                <th>FG%</th>
-                <th>3PTM</th>
-                <th>FTM</th>
-                <th>FTA</th>
-                <th>FT%</th>
-                <th>REB</th>
-                <th>AST</th>
-                <th>STL</th>
-                <th>BLK</th>
-                <th>TOV</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Before</td>
-                <td>{teamavg.PTS}</td>
-                <td>{teamavg.FGM}</td>
-                <td>{teamavg.FGA}</td>
-                <td>{teamavg.FG_PCT}</td>
-                <td>{teamavg.FG3M}</td>
-                <td>{teamavg.FTM}</td>
-                <td>{teamavg.FTA}</td>
-                <td>{teamavg.FT_PCT}</td>
-                <td>{teamavg.REB}</td>
-                <td>{teamavg.AST}</td>
-                <td>{teamavg.STL}</td>
-                <td>{teamavg.BLK}</td>
-                <td>{teamavg.TOV}</td>
-              </tr>
-              <tr>
-                <td>After</td>
-                <td style={{color: this.state.colorcode.PTS}}>{this.state.up.PTS}</td>
-                <td >{this.state.up.FGM}</td>
-                <td >{this.state.up.FGA}</td>
-                <td style={{color: this.state.colorcode.FG_PCT}}>{this.state.up.FG_PCT}</td>
-                <td style={{color: this.state.colorcode.FG3M}}>{this.state.up.FG3M}</td>
-                <td >{this.state.up.FTM}</td>
-                <td >{this.state.up.FTA}</td>
-                <td style={{color: this.state.colorcode.FT_PCT}}>{this.state.up.FT_PCT}</td>
-                <td style={{color: this.state.colorcode.REB}}>{this.state.up.REB}</td>
-                <td style={{color: this.state.colorcode.AST}}>{this.state.up.AST}</td>
-                <td style={{color: this.state.colorcode.STL}}>{this.state.up.STL}</td>
-                <td style={{color: this.state.colorcode.BLK}}>{this.state.up.BLK}</td>
-                <td style={{color: this.state.colorcode.TOV}}>{this.state.up.TOV}</td>
-              </tr>
-            </tbody>
-          </table> 
+          {this.state.tar==="ratings"?
+            <table className="table table-striped table-hover table-bordered">
+              <thead>
+                <tr>
+                  <th>{this.state.ateam}</th>
+                  <th>PTS</th>
+                  <th>FG%</th>
+                  <th>3PTM</th>
+                  <th>FT%</th>
+                  <th>REB</th>
+                  <th>AST</th>
+                  <th>STL</th>
+                  <th>BLK</th>
+                  <th>TOV</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Before</td>
+                  <td>{teamrat.PTS}</td>
+                  <td>{teamrat.FG_PCT}</td>
+                  <td>{teamrat.FG3M}</td>
+                  <td>{teamrat.FT_PCT}</td>
+                  <td>{teamrat.REB}</td>
+                  <td>{teamrat.AST}</td>
+                  <td>{teamrat.STL}</td>
+                  <td>{teamrat.BLK}</td>
+                  <td>{teamrat.TOV}</td>
+                </tr>
+                <tr>
+                  <td>After</td>
+                  <td style={{color: this.state.colorcode.PTS}}>{this.state.upr.PTSrt}</td>
+                  <td style={{color: this.state.colorcode.FG_PCT}}>{this.state.upr.FG_PCTrt}</td>
+                  <td style={{color: this.state.colorcode.FG3M}}>{this.state.upr.FG3Mrt}</td>
+                  <td style={{color: this.state.colorcode.FT_PCT}}>{this.state.upr.FT_PCTrt}</td>
+                  <td style={{color: this.state.colorcode.REB}}>{this.state.upr.REBrt}</td>
+                  <td style={{color: this.state.colorcode.AST}}>{this.state.upr.ASTrt}</td>
+                  <td style={{color: this.state.colorcode.STL}}>{this.state.upr.STLrt}</td>
+                  <td style={{color: this.state.colorcode.BLK}}>{this.state.upr.BLKrt}</td>
+                  <td style={{color: this.state.colorcode.TOV}}>{this.state.upr.TOVrt}</td>
+                </tr>
+              </tbody>
+            </table>
+            :<table className="table table-striped table-hover table-bordered">
+                <thead>
+                  <tr>
+                    <th>{this.state.ateam}</th>
+                    <th>PTS</th>
+                    <th>FGM</th>
+                    <th>FGA</th>
+                    <th>FG%</th>
+                    <th>3PTM</th>
+                    <th>FTM</th>
+                    <th>FTA</th>
+                    <th>FT%</th>
+                    <th>REB</th>
+                    <th>AST</th>
+                    <th>STL</th>
+                    <th>BLK</th>
+                    <th>TOV</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Before</td>
+                    <td>{teamavg.PTS}</td>
+                    <td>{teamavg.FGM}</td>
+                    <td>{teamavg.FGA}</td>
+                    <td>{teamavg.FG_PCT}</td>
+                    <td>{teamavg.FG3M}</td>
+                    <td>{teamavg.FTM}</td>
+                    <td>{teamavg.FTA}</td>
+                    <td>{teamavg.FT_PCT}</td>
+                    <td>{teamavg.REB}</td>
+                    <td>{teamavg.AST}</td>
+                    <td>{teamavg.STL}</td>
+                    <td>{teamavg.BLK}</td>
+                    <td>{teamavg.TOV}</td>
+                  </tr>
+                  <tr>
+                    <td>After</td>
+                    <td style={{color: this.state.colorcode.PTS}}>{this.state.up.PTS}</td>
+                    <td >{this.state.up.FGM}</td>
+                    <td >{this.state.up.FGA}</td>
+                    <td style={{color: this.state.colorcode.FG_PCT}}>{this.state.up.FG_PCT}</td>
+                    <td style={{color: this.state.colorcode.FG3M}}>{this.state.up.FG3M}</td>
+                    <td >{this.state.up.FTM}</td>
+                    <td >{this.state.up.FTA}</td>
+                    <td style={{color: this.state.colorcode.FT_PCT}}>{this.state.up.FT_PCT}</td>
+                    <td style={{color: this.state.colorcode.REB}}>{this.state.up.REB}</td>
+                    <td style={{color: this.state.colorcode.AST}}>{this.state.up.AST}</td>
+                    <td style={{color: this.state.colorcode.STL}}>{this.state.up.STL}</td>
+                    <td style={{color: this.state.colorcode.BLK}}>{this.state.up.BLK}</td>
+                    <td style={{color: this.state.colorcode.TOV}}>{this.state.up.TOV}</td>
+                  </tr>
+                </tbody>
+              </table> 
+          }
+          
         </div>
         
       )
@@ -383,6 +510,8 @@ class Trade extends Component {
       listb:[],
       choiceb:[],
       up:{},
+      upr:{},
+      
       traded:false,
       colorcode:{},
     })
@@ -400,6 +529,12 @@ class Trade extends Component {
           :<h1 style={{margin:"auto"}}>Trade</h1>
         }
         {this.state.choicea.length || this.state.choiceb.length?
+          <ToggleButtonGroup type="radio" name="options" defaultValue="" onChange={this.togglear.bind(this)}>
+            <ToggleButton value={this.state.tar?"":"ratings"} style={{padding: "5px",border: "black 1px solid"}}>{this.state.tar?"Toggle: Ratings":"Toggle: Avg"}</ToggleButton>
+          </ToggleButtonGroup>
+          :<div/>
+        }
+        {this.state.choicea.length || this.state.choiceb.length?
           <button className="btn btn-primary" style={{margin:"auto",fontSize:"2rem"}} onClick={() => this.resetClick()}>Reset</button>
           :<div/>
         }
@@ -411,7 +546,7 @@ class Trade extends Component {
         }
 
 
-        {this.state.choicea.length?
+        {this.state.choicea.length && this.state.tar===""?
             <div>
               <h6 >Trading away: <strong style={{color:"red"}}>{[...this.state.choicea].join(",")}</strong></h6>
               <BootstrapTable 
@@ -424,7 +559,20 @@ class Trade extends Component {
             :<div/>
         }
 
-        {this.state.choiceb.length?
+        {this.state.choicea.length&& this.state.tar==="ratings"?
+            <div>
+              <h6 >Trading away: <strong style={{color:"red"}}>{[...this.state.choicea].join(",")}</strong></h6>
+              <BootstrapTable 
+              striped
+              hover
+              keyField='id' 
+              data={ this.props.aratings.filter(item => this.state.choicea.includes(item.Player_Name)) } 
+              columns={ this.state.columnsrt }/>
+            </div>
+            :<div/>
+        }
+
+        {this.state.choiceb.length&& this.state.tar===""?
             <div>
               <h6 >Trading For: <strong style={{color:"green"}}>{[...this.state.choiceb].join(",")}</strong></h6>
               <BootstrapTable 
@@ -433,6 +581,19 @@ class Trade extends Component {
               keyField='id' 
               data={ this.props.aratings.filter(item => this.state.choiceb.includes(item.Player_Name)) } 
               columns={ this.state.columns }/>
+            </div>
+            :<div/>
+        }
+
+        {this.state.choiceb.length&& this.state.tar==="ratings"?
+            <div>
+              <h6 >Trading For: <strong style={{color:"green"}}>{[...this.state.choiceb].join(",")}</strong></h6>
+              <BootstrapTable 
+              striped
+              hover
+              keyField='id' 
+              data={ this.props.aratings.filter(item => this.state.choiceb.includes(item.Player_Name)) } 
+              columns={ this.state.columnsrt }/>
             </div>
             :<div/>
         }
