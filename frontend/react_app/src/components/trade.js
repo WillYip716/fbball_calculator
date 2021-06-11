@@ -188,7 +188,16 @@ class Trade extends Component {
         STL:  Math.round((p.STL + c.STL)*100)/100,
         BLK:  Math.round((p.BLK + c.BLK)*100)/100,
         TOV:  Math.round((p.TOV + c.TOV)*100)/100,
-      }},{PTS:0,FGM:0,FGA:0,FG3M:0,FTM:0,FTA:0,REB:0,AST:0,STL:0,BLK:0,TOV:0});
+        PTSrt:  Math.round((p.PTSrt + c.PTSrt)*100)/100,
+        FG_PCTrt:  Math.round((p.FG_PCTrt + c.FG_PCTrt)*100)/100,
+        FG3Mrt: Math.round((p.FG3Mrt + c.FG3Mrt)*100)/100,
+        FT_PCTrt:  Math.round((p.FT_PCTrt + c.FT_PCTrt)*100)/100,
+        REBrt:  Math.round((p.REBrt + c.REBrt)*100)/100,
+        ASTrt:  Math.round((p.ASTrt + c.ASTrt)*100)/100,
+        STLrt:  Math.round((p.STLrt + c.STLrt)*100)/100,
+        BLKrt:  Math.round((p.BLKrt + c.BLKrt)*100)/100,
+        TOVrt:  Math.round((p.TOVrt + c.TOVrt)*100)/100,
+      }},{PTS:0,FGM:0,FGA:0,FG3M:0,FTM:0,FTA:0,REB:0,AST:0,STL:0,BLK:0,TOV:0,PTSrt:0,FG_PCTrt:0,FG3Mrt:0,FT_PCTrt:0,REBrt:0,ASTrt:0,STLrt:0,BLKrt:0,TOVrt:0});
 
 
     const tradefor = this.props.aratings.filter(item => this.state.choiceb.includes(item.Player_Name)).reduce(function(p, c) {
@@ -204,18 +213,36 @@ class Trade extends Component {
         STL:  Math.round((p.STL + c.STL)*100)/100,
         BLK:  Math.round((p.BLK + c.BLK)*100)/100,
         TOV:  Math.round((p.TOV + c.TOV)*100)/100,
-      }},{PTS:0,FGM:0,FGA:0,FG3M:0,FTM:0,FTA:0,REB:0,AST:0,STL:0,BLK:0,TOV:0});
+        PTSrt:  Math.round((p.PTSrt + c.PTSrt)*100)/100,
+        FG_PCTrt:  Math.round((p.FG_PCTrt + c.FG_PCTrt)*100)/100,
+        FG3Mrt: Math.round((p.FG3Mrt + c.FG3Mrt)*100)/100,
+        FT_PCTrt:  Math.round((p.FT_PCTrt + c.FT_PCTrt)*100)/100,
+        REBrt:  Math.round((p.REBrt + c.REBrt)*100)/100,
+        ASTrt:  Math.round((p.ASTrt + c.ASTrt)*100)/100,
+        STLrt:  Math.round((p.STLrt + c.STLrt)*100)/100,
+        BLKrt:  Math.round((p.BLKrt + c.BLKrt)*100)/100,
+        TOVrt:  Math.round((p.TOVrt + c.TOVrt)*100)/100,
+      }},{PTS:0,FGM:0,FGA:0,FG3M:0,FTM:0,FTA:0,REB:0,AST:0,STL:0,BLK:0,TOV:0,PTSrt:0,FG_PCTrt:0,FG3Mrt:0,FT_PCTrt:0,REBrt:0,ASTrt:0,STLrt:0,BLKrt:0,TOVrt:0});
     
 
-    const tot = Object.keys(tradefor).reduce((p, c) => {
+    const tot = Object.keys(tradefor).slice(0,11).reduce((p, c) => {
         p[c] = Math.round((tradefor[c] - tradeaway[c])*100)/100;
         return p;
     }, {});
 
+    console.log(tot);
+    console.log(Object.keys(tradefor).slice(11));
+
 
     const teamavg = this.props.avg.filter(item => item.team === this.state.ateam)[0];
+    //const teamranks = this.props.tr.filter(item => item.team === this.state.ateam)[0];
 
     const updatedavg = Object.keys(tot).reduce((p, c) => {
+      p[c] = Math.round((parseFloat(teamavg[c]) + tot[c])*100)/100;
+      return p;
+    }, {});
+
+    const updatedtr= Object.keys(tot).reduce((p, c) => {
       p[c] = Math.round((parseFloat(teamavg[c]) + tot[c])*100)/100;
       return p;
     }, {});
@@ -462,6 +489,7 @@ const mapStateToProps = state => {
       avgrank: state.comp.rankings.rankavg,
       totrank: state.comp.rankings.ranktot,
       rkstd: state.comp.rankings.rkstd,
+      tr: state.comp.rankings.teamrat
     };
 };
 

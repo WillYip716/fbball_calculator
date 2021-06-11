@@ -11,14 +11,14 @@ from fball_calculator.models import Player,Team,Positions, AvrComp
 
 @api_view(['POST'])
 def compile(request):
-    validation = validate_api(request)
+    data = json.loads(request.body)
+    validation = validate_api(data)
     res = {}
     if not validation["success"]:
         res["errors"] = validation["errors"]
         return HttpResponse(res, status=400)
 
-    data = json.loads(request.body)["teams"]
-    #print(data)
+    data = data["teams"]
     allarr = []
 
 
