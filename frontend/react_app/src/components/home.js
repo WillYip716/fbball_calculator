@@ -4,10 +4,12 @@ import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import { Button, Form } from "react-bootstrap";
+import { Button,Form } from "react-bootstrap";
 import { connect } from "react-redux";
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
+import InputGroup from 'react-bootstrap/InputGroup';
+import FormControl from 'react-bootstrap/FormControl'
 
 
 class Home extends Component {
@@ -374,8 +376,12 @@ class Home extends Component {
             all: updateda,
           });
       }
-
   }
+
+  filterval(event){
+    console.log("clicked");
+  }
+
   
   render() {
 
@@ -393,6 +399,81 @@ class Home extends Component {
         {this.state.tar !== "ratings" &&  this.state.all.length ?
           <div>
             <h1>All Players</h1>
+            <InputGroup className="mb-3" >
+              <InputGroup.Prepend>
+                <InputGroup.Text id="PTS">PTS>=</InputGroup.Text>
+              </InputGroup.Prepend>
+              <FormControl
+                type="number"
+                placeholder="0"
+                aria-label="PTS"
+                aria-describedby="PTS"
+              />
+              <InputGroup.Prepend>
+                <InputGroup.Text id="FG">FG%>=</InputGroup.Text>
+              </InputGroup.Prepend>
+              <FormControl
+                type="number"
+                placeholder="0"
+                aria-label="FG"
+                aria-describedby="FG"
+              />
+              <InputGroup.Prepend>
+                <InputGroup.Text id="3PTM">3PTM>=</InputGroup.Text>
+              </InputGroup.Prepend>
+              <FormControl
+                type="number"
+                placeholder="0"
+                aria-label="3PTM"
+                aria-describedby="3PTM"
+              />
+              <InputGroup.Prepend>
+                <InputGroup.Text id="FT">FT%>=</InputGroup.Text>
+              </InputGroup.Prepend>
+              <FormControl
+                type="number"
+                placeholder="0"
+                aria-label="FT"
+                aria-describedby="FT"
+              />
+              <InputGroup.Prepend>
+                <InputGroup.Text id="REB">REB>=</InputGroup.Text>
+              </InputGroup.Prepend>
+              <FormControl
+                type="number"
+                placeholder="0"
+                aria-label="REB"
+                aria-describedby="REB"
+              />
+              <InputGroup.Prepend>
+                <InputGroup.Text id="AST">AST>=</InputGroup.Text>
+              </InputGroup.Prepend>
+              <FormControl
+                type="number"
+                placeholder="0"
+                aria-label="AST"
+                aria-describedby="AST"
+              />
+              <InputGroup.Prepend>
+                <InputGroup.Text id="STL">STL>=</InputGroup.Text>
+              </InputGroup.Prepend>
+              <FormControl
+                type="number"
+                placeholder="0"
+                aria-label="STL"
+                aria-describedby="STL"
+              />
+              <InputGroup.Prepend>
+                <InputGroup.Text id="BLK">BLK>=</InputGroup.Text>
+              </InputGroup.Prepend>
+              <FormControl
+                type="number"
+                placeholder="0"
+                aria-label="BLK"
+                aria-describedby="BLK"
+              />
+              <Button type="submit" style={{backgroundColor: "gray",border: "black 1px solid"}} onClick={this.filterval.bind(this)}>Filter</Button>
+            </InputGroup>
             <BootstrapTable 
             striped
             hover
