@@ -13,6 +13,7 @@ const persistConfig = { // configuration object for redux-persist
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 
+
 const store = createStore(
    persistedReducer,
    {},
