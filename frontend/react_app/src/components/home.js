@@ -610,12 +610,12 @@ class Home extends Component {
     if(event.target.value === ""){
       this.setState({
         [val]: "0"
-      },()=>{console.log(this.state.[val])})
+      })
     }
     else{
       this.setState({
         [val]: event.target.value
-      },()=>{console.log(this.state.[val])})
+      })
     }
   }
 

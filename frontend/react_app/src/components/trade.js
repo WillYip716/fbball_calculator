@@ -510,8 +510,7 @@ class Trade extends Component {
       listb:[],
       choiceb:[],
       up:{},
-      upr:{},
-      
+      upr:{}, 
       traded:false,
       colorcode:{},
     })

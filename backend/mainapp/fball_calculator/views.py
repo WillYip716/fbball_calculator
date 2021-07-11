@@ -4,7 +4,7 @@ import json
 from rest_framework.decorators import api_view
 from rest_framework import serializers, viewsets, status
 from django.http import HttpResponse
-from fball_calculator.models import Player,Team,Positions, AvrComp
+from .models import Player,Team,Positions, AvrComp
 from .serializer import PlayerSerializer, TeamSerializer, PositionsSerializer, AvrCompSerializer
 #from fball_calculator.models import Game
 

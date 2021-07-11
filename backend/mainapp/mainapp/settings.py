@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'fball_calculator',
     'django_extensions',
+    'rest_framework',
     'corsheaders',
 ]
 
